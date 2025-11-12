@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment.dev';
+import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
 
 export type Employe = {
@@ -22,7 +22,8 @@ export type Employe = {
 })
 export class EmployeesService {
 
-  baseApi = environment.apiUrl;
+  private baseApi = environment.apiUrl;
+  fileName = environment.fileName;
 
   constructor(private http: HttpClient) { }
 

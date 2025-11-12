@@ -72,7 +72,7 @@ export class EmployeListComponent implements OnInit, OnDestroy {
       next: (data) => {
         this.employees = data;
         console.log(data);
-        console.log(this.employeService.baseApi);
+        console.log(this.employeService.fileName);
       },
       error: (error) => {
         console.error(error);
