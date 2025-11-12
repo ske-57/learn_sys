@@ -1,12 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-
-interface Employee {
-  name: string;
-  last_name: string;
-  middle_name: string;
-  organization: string;
-}
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Employe, EmployeesService } from '../services/employees/employees.service';
 
 @Component({
   selector: 'app-employe-list.component',
@@ -16,7 +10,8 @@ interface Employee {
   styleUrl: './employe-list.component.css',
 })
 export class EmployeListComponent implements OnInit, OnDestroy {
-  employees: Employee[] = [];
+  employees: Employe[] = [];
+  private employeService = inject(EmployeesService);
 
 
   ngOnInit(): void {
@@ -27,27 +22,63 @@ export class EmployeListComponent implements OnInit, OnDestroy {
     this.employees = [];
   }
 
-  loadEmployees() {
+  private loadEmployeesMock(): void {
     this.employees = [
       {
         name: 'Azazin',
         last_name: 'Creed',
         middle_name: 'Creedovich',
-        organization: 'Sber'
+        organization: 'T-bank',
+        id: 1,
+        snils: null,
+        birthday_date: null,
+        grade: null,
+        phone: null,
+        email: null,
+        is_active: false
       },
       {
         name: 'Azazin2',
         last_name: 'Creed',
         middle_name: 'Creedovich',
-        organization: 'Sber'
+        organization: 'Alfa',
+        id: 2,
+        snils: null,
+        birthday_date: null,
+        grade: null,
+        phone: null,
+        email: null,
+        is_active: false
       },
       {
         name: 'Azazin3',
         last_name: 'Creed',
         middle_name: 'Creedovich',
-        organization: 'Sber'
+        organization: 'Sber',
+        id: 3,
+        snils: null,
+        birthday_date: null,
+        grade: null,
+        phone: null,
+        email: null,
+        is_active: false
       }
     ]
+  }
+
+  private loadEmployees(): void {
+
+    this.employeService.getEmployees().subscribe({
+      next: (data) => {
+        this.employees = data;
+        console.log(data);
+        console.log(this.employeService.baseApi);
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    })
+
   }
 
 }

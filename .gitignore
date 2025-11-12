@@ -4,6 +4,10 @@
 /out-tsc
 /bazel-out
 
+# Env
+/src/environments/*
+!/src/environments/*.example
+
 # Node
 /node_modules
 npm-debug.log
@@ -44,3 +48,4 @@ Thumbs.db
 /backend/.env
 /backend/db.origin.js
 /backend/database.sql
+
