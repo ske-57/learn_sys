@@ -4,7 +4,8 @@
 /out-tsc
 /bazel-out
 
-/src/environments
+# Env
+/src/environments/*
 !/src/environments/*.example
 
 # Node
@@ -46,3 +47,5 @@ Thumbs.db
 /backend/node_modules
 /backend/.env
 /backend/db.origin.js
+/backend/database.sql
+
