@@ -1,0 +1,331 @@
+/* фон страницы */
+.employees-page {
+    min-height: 100dvh;
+    background: var(--bg);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* верхняя полоса с вкладками — ЧУТЬ НИЖЕ, ЦЕНТР */
+.tabs-wrap {
+    background: var(--header);
+    border-radius: 12px;
+    padding: 12px 20px;
+    /* компактнее по высоте */
+    min-height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tabs {
+    display: flex;
+    gap: 56px;
+    /* больше промежуток между кнопками */
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* ТАБЫ: одинаковые размеры, шире и ниже по высоте, ховер */
+.tab {
+    /* одинаковая ширина/высота для всех кнопок */
+    width: var(--tab-width);
+    min-width: var(--tab-width);
+    max-width: var(--tab-width);
+    height: var(--tab-height);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* центрируем иконку и текст */
+    gap: 12px;
+
+    padding: 0 14px;
+    /* небольшой боковой паддинг, высоту задаём фиксированно */
+    border-radius: 18px;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+
+    background: transparent;
+    border: 0;
+    color: #3b2f63;
+
+    transition: background-color .15s ease, box-shadow .15s ease;
+}
+
+.tab:hover {
+    background: #cbb9de;
+    /* лёгкая подсветка при наведении */
+    box-shadow: inset 0 -1px 0 rgba(255, 255, 255, .7);
+}
+
+.tab.active {
+    background: var(--chip);
+    box-shadow: inset 0 -1px 0 rgba(255, 255, 255, .7);
+}
+
+.tab.active:hover {
+    background: #e6d9f1;
+    /* активная чуть темнее при ховере */
+}
+
+.tab-ico {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #fff;
+    display: grid;
+    place-items: center;
+    box-shadow: inset 0 0 0 2px #d9c9f4;
+}
+
+.tab-ico svg {
+    width: 14px;
+    height: 14px;
+    color: #6c58c4;
+}
+
+/* карточка — занимает остаток экрана, список тянется */
+.card {
+    background: var(--panel);
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+    padding: 24px 28px 28px;
+    margin-top: 20px;
+
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    /* растягиваем под экран */
+    min-height: 0;
+    /* важно для корректного overflow у .table */
+}
+
+.card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.card-head h1 {
+    margin: 0;
+    font-size: 38px;
+    font-weight: 700;
+    margin-left: 12px;
+    /* «Список сотрудников» чуть правее */
+}
+
+/* кнопка "Добавить" — крупнее */
+.btn {
+    appearance: none;
+    border: 0;
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn.primary {
+    color: #fff;
+    background: var(--primary);
+    box-shadow: 0 6px 14px rgba(111, 81, 213, .35);
+    transition: background-color .15s ease, transform .02s ease;
+}
+
+.btn.primary:hover {
+    background: #7a5ce0;
+    /* лёгкий ховер */
+}
+
+.btn.primary:active {
+    background: var(--primary-press);
+    transform: translateY(1px);
+}
+
+/* только в шапке делаем кнопку ещё больше */
+.card-head .btn.primary {
+    font-size: 16px;
+    padding: 12px 22px;
+    /* шире, выше кликабельность */
+    border-radius: 14px;
+    min-height: 44px;
+}
+
+/* поиск — текст не уезжает под иконку */
+.toolbar {
+    margin: 8px 0 18px;
+}
+
+.search {
+    position: relative;
+    width: 320px;
+    max-width: 100%;
+    display: block;
+}
+
+.search input {
+    width: 100%;
+    height: 38px;
+    border-radius: 19px;
+    border: none;
+    outline: none;
+    background: #e9e1ef;
+    padding: 0 56px 0 16px;
+    /* правый отступ больше ширины иконки */
+    color: var(--text);
+}
+
+.search input::placeholder {
+    color: #887fa2;
+}
+
+.s-ico {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    translate: 0 -50%;
+    width: 22px;
+    height: 22px;
+    color: #6e64a0;
+    pointer-events: none;
+    /* не мешает клику по инпуту */
+}
+
+.s-ico svg {
+    width: 100%;
+    height: 100%;
+}
+
+.table {
+    margin-top: 12px;
+    padding-inline: 12px;
+    width: min(100%, 920px);
+    /* ограничиваем ширину */
+    /* align-self: center; */
+    /* центрируем внутри .card */
+    flex: 1 1 auto;
+    /* тянется по высоте */
+    min-height: 0;
+    overflow: auto;
+    /* прокрутка только списка */
+}
+
+.tr {
+    display: grid;
+    grid-template-columns: 1.3fr 0.8fr 0.5fr;
+    align-items: center;
+    padding: 12px 0;
+}
+
+.tr:last-child {
+    border-bottom: 0;
+}
+
+.tr.head {
+    color: var(--muted);
+    font-weight: 600;
+    border-bottom: none;
+    margin-bottom: 6px;
+}
+
+/* действия */
+.actions {
+    display: flex;
+    gap: 14px;
+}
+
+.icon-btn {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    background: #fff;
+    border-radius: 50%;
+    border: 1px solid var(--stroke);
+    transition: background-color .15s ease;
+}
+
+.icon-btn:hover {
+    background: #f7f2fc;
+}
+
+.icon-btn svg {
+    width: 20px;
+    height: 20px;
+    color: #6c58c4;
+}
+
+/* адаптив */
+@media (max-width: 900px) {
+
+    /* На средних экранах сделаем табы чуть компактнее, но одинакового размера */
+    :host {
+        --tab-width: 156px;
+        --tab-height: 38px;
+    }
+
+    .tabs {
+        gap: 44px;
+    }
+}
+
+@media (max-width: 640px) {
+    :host {
+        --tab-width: 140px;
+        --tab-height: 36px;
+    }
+
+    .tabs {
+        gap: 28px;
+        /* на узких экранах промежуток поменьше, чтобы не ломалось */
+    }
+
+    .card-head h1 {
+        font-size: 28px;
+        margin-left: 10px;
+        /* сохраняем «чуть правее» и на мобилках */
+    }
+
+    .card-head .btn.primary {
+        padding: 11px 18px;
+        min-height: 42px;
+        font-size: 15px;
+    }
+
+    .tr {
+        grid-template-columns: 1fr 0.8fr auto;
+    }
+}
+
+@media (max-width: 460px) {
+    :host {
+        --tab-width: 48%;
+        --tab-height: 36px;
+    }
+
+    /* По 2 таба в строке на очень узких экранах */
+    .tab {
+        width: var(--tab-width);
+        min-width: 0;
+        max-width: none;
+    }
+
+    .tr {
+        grid-template-columns: 1fr;
+        row-gap: 6px;
+    }
+
+    .actions {
+        justify-self: start;
+    }
+
+    .table {
+        padding-inline: 10px;
+        /* чуть меньше боковые отступы на узких экранах */
+    }
+}
