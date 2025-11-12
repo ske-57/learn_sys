@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS employees CASCADE;
 
 CREATE TABLE employees (
-  id            BIGINT PRIMARY KEY,
+  id            SERIAL             PRIMARY KEY,
   name          VARCHAR(255)       NOT NULL,
   last_name     VARCHAR(255)       NOT NULL,
   middle_name   VARCHAR(255)       NOT NULL,
