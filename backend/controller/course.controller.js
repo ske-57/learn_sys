@@ -34,7 +34,7 @@ class CourseController {
     async getCourses(req, res) {
         try {
             const courses = await db.query(`
-                SELECT c.id, c.name, c.mark, SUM(cl.hours) as total_hours FROM courses c
+                SELECT c.id, c.name, c.mark, SUM(cl.hours) as hours FROM courses c
                 JOIN course_lessons cl ON cl.course_id = c.id
                 GROUP BY c.id, c.name
                 `)
