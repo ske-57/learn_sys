@@ -80,7 +80,6 @@ export class EmployeListComponent implements OnInit, OnDestroy {
       next: (data) => {
         this.employees = data;
         console.log(data);
-        console.log(this.employeService.fileName);
       },
       error: (error) => {
         console.error(error);
@@ -92,6 +91,10 @@ export class EmployeListComponent implements OnInit, OnDestroy {
   navigateToEmployeeCreate(): void {
     // Логика навигации к компоненту создания сотрудника
     this.router.navigate(['/create-employee']);
+  }
+
+  navigateToCourses(): void {
+    this.router.navigate(['/courses']);
   }
 
 }

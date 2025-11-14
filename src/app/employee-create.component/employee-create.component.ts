@@ -60,4 +60,8 @@ export class EmployeeCreateComponent {
     // Логика навигации к списку сотрудников
     this.router.navigate(['/']);
   }
+
+  navigateToCourses(): void {
+    this.router.navigate(['/courses']);
+  }
 }

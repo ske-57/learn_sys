@@ -13,7 +13,6 @@ export type EmployeeWithOrg = Employee & { organization_name: string};
 export class EmployeesService {
 
   private baseApi = environment.apiUrl;
-  fileName = environment.fileName;
 
   constructor(private http: HttpClient) { }
 

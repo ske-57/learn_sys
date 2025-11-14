@@ -1,0 +1,102 @@
+<div class="employees-page">
+
+  <!-- Верхняя полоса с вкладками -->
+  <div class="tabs-wrap">
+    <nav class="tabs">
+      <button class="tab" (click)="navigateToEmployees()">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Сотрудники
+      </button>
+
+      <button class="tab active">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Курсы
+      </button>
+
+      <button class="tab">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Группы
+      </button>
+
+      <button class="tab">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Отчеты
+      </button>
+    </nav>
+  </div>
+
+  <!-- Белая панель -->
+  <section class="card card--courses">
+
+    <!-- Заголовок + кнопка -->
+    <header class="card-head">
+      <h1>Управление курсами</h1>
+
+      <button class="btn primary" (click)="onCreate()">
+        Создать курс
+      </button>
+    </header>
+
+    <!-- Поиск по названию -->
+    <div class="toolbar">
+      <label class="search">
+        <input
+          type="text"
+          placeholder="Поиск по названию"
+          (ngModelChange)="onSearchChange($event)"
+        />
+        <span class="s-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#search"></use>
+          </svg>
+        </span>
+      </label>
+    </div>
+
+    <!-- Таблица курсов -->
+    <div class="table courses-table">
+      <div class="tr head">
+        <div>Название</div>
+        <div class="col-hours">Часы</div>
+        <div class="col-actions">Действия</div>
+      </div>
+
+      <div class="tr" *ngFor="let course of courses">
+        <div class="course-name">
+          {{ course.name }}
+        </div>
+        <div class="course-hours">
+          {{ course.hours }}
+        </div>
+        <div class="actions">
+          <button
+            class="icon-btn"
+            title="Редактировать"
+            (click)="onEdit(course)"
+          >
+            <svg viewBox="0 0 24 24">
+              <use href="#pencil"></use>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </section>
+</div>
