@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { Employe, EmployeesService } from '../services/employees/employees.service';
+import { EmployeeWithOrg, EmployeesService } from '../services/employees/employees.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-employe-list.component',
@@ -10,7 +11,8 @@ import { Employe, EmployeesService } from '../services/employees/employees.servi
   styleUrl: './employe-list.component.css',
 })
 export class EmployeListComponent implements OnInit, OnDestroy {
-  employees: Employe[] = [];
+  private router = inject(Router);
+  employees: EmployeeWithOrg[] = [];
   private employeService = inject(EmployeesService);
 
 
@@ -28,39 +30,45 @@ export class EmployeListComponent implements OnInit, OnDestroy {
         name: 'Azazin',
         last_name: 'Creed',
         middle_name: 'Creedovich',
-        organization: 'T-bank',
+        organization_id: 1,
+        organization_name: 'Org1',
         id: 1,
         snils: null,
-        birthday_date: null,
+        birth_date: null,
         grade: null,
         phone: null,
         email: null,
+        education: 'MAI',
         is_active: false
       },
       {
         name: 'Azazin2',
         last_name: 'Creed',
         middle_name: 'Creedovich',
-        organization: 'Alfa',
+        organization_id: 2,
+        organization_name: 'Org2',
         id: 2,
         snils: null,
-        birthday_date: null,
+        birth_date: null,
         grade: null,
         phone: null,
         email: null,
+        education: 'MSU',
         is_active: false
       },
       {
         name: 'Azazin3',
         last_name: 'Creed',
         middle_name: 'Creedovich',
-        organization: 'Sber',
+        organization_id: 3,
+        organization_name: 'T-bank',
         id: 3,
         snils: null,
-        birthday_date: null,
+        birth_date: null,
         grade: null,
         phone: null,
         email: null,
+        education: 'SPbPU',
         is_active: false
       }
     ]
@@ -79,6 +87,11 @@ export class EmployeListComponent implements OnInit, OnDestroy {
       }
     })
 
+  }
+
+  navigateToEmployeeCreate(): void {
+    // Логика навигации к компоненту создания сотрудника
+    this.router.navigate(['/create-employee']);
   }
 
 }

@@ -2,20 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
+import { Employee } from '../../types/Employee/Employee-type';
+import { EmployeeCreateDTO } from '../../types/Employee/Employee-createDTO';
 
-export type Employe = {
-  id: number;
-  name: string;
-  last_name: string;
-  middle_name: string;
-  snils: string | null;
-  birthday_date: string | null;  // ISO-date, если приходит из БД/JSON
-  organization: string;
-  grade: number | null;
-  phone: string | null;
-  email: string | null;
-  is_active: boolean;
-}
+export type EmployeeWithOrg = Employee & { organization_name: string};
 
 @Injectable({
   providedIn: 'root',
@@ -28,12 +18,16 @@ export class EmployeesService {
   constructor(private http: HttpClient) { }
 
 
-  getEmployees(): Observable<Employe[]> {
-    return this.http.get<Employe[]>(`${this.baseApi}/employees`);
+  getEmployees(): Observable<EmployeeWithOrg[]> {
+    return this.http.get<EmployeeWithOrg[]>(`${this.baseApi}/employees`);
   }
 
-  createEmploye(body: Employe): Observable<Employe> {
-    return this.http.post<Employe>(`${this.baseApi}/employees`, body);
+  createEmployee(body: EmployeeCreateDTO): Observable<EmployeeCreateDTO> {
+    return this.http.post<EmployeeCreateDTO>(`${this.baseApi}/employees`, body);
+  }
+
+  getOrganizations(): Observable<{id: number, name: string}[]> {
+    return this.http.get<{id: number, name: string}[]>(`${this.baseApi}/organizations`);
   }
 
 }

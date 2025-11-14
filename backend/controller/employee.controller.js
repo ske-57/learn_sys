@@ -1,25 +1,54 @@
+const e = require('express')
 const db = require('../db.origin')
 
 class EmployeController {
 
     // Create a new employee
-    async createEmploye(req, res) {
+    async createEmployee(req, res) {
         try {
-            const { name, last_name, middle_name, organization, snils, birthday_date, grade, phone, email } = req.body
+            const {
+                name,
+                last_name,
+                middle_name,
+                organization_id,
+                snils,
+                birth_date,
+                grade,
+                phone,
+                email,
+                education
+            } = req.body
 
-            if (!name || !last_name || !middle_name || !organization) {
-                return res.status(400).json({ error: 'Missing required fields: name, last_name, middle_name, organization' })
+            // required fields according to DB schema
+            if (!name || !last_name || !organization_id || !education) {
+                return res.status(400).json({ error: 'Missing required fields: name, last_name, organization_id, education' })
             }
 
             const result = await db.query(
-                `INSERT INTO employees(name, last_name, middle_name, organization, snils, birthday_date, grade, phone, email)
-                 VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`,
-                [name, last_name, middle_name, organization, snils || null, birthday_date || null, grade || null, phone || null, email || null]
+                `INSERT INTO employees(
+                    name, last_name, middle_name, snils, birth_date, organization_id, grade, phone, email, education
+                ) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *`,
+                [
+                    name,
+                    last_name,
+                    middle_name || null,
+                    snils || null,
+                    birth_date || null,
+                    organization_id,
+                    grade || null,
+                    phone || null,
+                    email || null,
+                    education
+                ]
             )
 
             return res.status(201).json(result.rows[0])
         } catch (err) {
             console.error('createEmploye error', err)
+            // handle FK violation (invalid organization_id)
+            if (err && err.code === '23503') {
+                return res.status(400).json({ error: 'Invalid organization_id' })
+            }
             return res.status(500).json({ error: 'Internal server error' })
         }
     }
@@ -28,7 +57,23 @@ class EmployeController {
     async getEmployees(req, res) {
         try {
             const includeInactive = req.query.include_inactive === 'true'
-            const query = includeInactive ? `SELECT * FROM employees ORDER BY id` : `SELECT * FROM employees WHERE is_active = true ORDER BY id`
+            var query;
+            if (includeInactive) {
+                query = `
+                SELECT e.*, o.name AS organization_name
+                FROM employees e
+                LEFT JOIN organizations o ON o.id = e.organization_id
+                ORDER BY id
+                ` 
+            } else {
+                query = `
+                SELECT e.*, o.name AS organization_name
+                FROM employees e
+                LEFT JOIN organizations o ON o.id = e.organization_id
+                WHERE is_active = true
+                ORDER BY id
+                `
+            }
             const result = await db.query(query)
             return res.json(result.rows)
         } catch (err) {
@@ -56,7 +101,7 @@ class EmployeController {
             const { id } = req.params
 
             const allowed = [
-                'name', 'last_name', 'middle_name', 'snils', 'birthday_date', 'organization', 'grade', 'phone', 'email', 'is_active'
+                'name', 'last_name', 'middle_name', 'snils', 'birth_date', 'organization_id', 'grade', 'phone', 'email', 'is_active'
             ]
 
             const keys = Object.keys(req.body).filter(k => allowed.includes(k))
@@ -89,6 +134,18 @@ class EmployeController {
             return res.json({ message: 'Employee soft-deleted', employee: result.rows[0] })
         } catch (err) {
             console.error('softDeleteEmploye error', err)
+            return res.status(500).json({ error: 'Internal server error' })
+        }
+    }
+
+    async getOrganizations(req, res) {
+        try {
+            const result = await db.query(`
+                SELECT o.id, o.name FROM organizations o 
+                ORDER BY id`)
+            return res.json(result.rows)
+        } catch (err) {
+            console.error('getOrganizations error', err)
             return res.status(500).json({ error: 'Internal server error' })
         }
     }
