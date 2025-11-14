@@ -20,5 +20,9 @@ export class CoursesService {
   getCourses(): Observable<Course[]> {
     return this.http.get<Course[]>(`${this.baseApi}/courses`);
   }
+
+  getCourseById(course_id: number): Observable<Course> {
+    return this.http.get<Course>(`${this.baseApi}/courses/${course_id}`);
+  }
     
 }

@@ -1,0 +1,81 @@
+<!-- КУРСЫ -->
+<div class="courses-page">
+  <!-- Верхняя полоса с вкладками -->
+  <div class="tabs-wrap">
+    <nav class="tabs">
+      <button class="tab" (click)="navigateToEmployeesList()">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Сотрудники
+      </button>
+      <button class="tab active" (click)="navigateToCoursesList()">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Курсы
+      </button>
+      <button class="tab">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Группы
+      </button>
+      <button class="tab">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Отчеты
+      </button>
+    </nav>
+  </div>
+
+  <!-- Белая панель -->
+  <section class="card">
+    <header class="card-head">
+      <div class="card-head-main">
+        <h1>Уроки курса - {{ course.name }}</h1>
+        <p class="card-subtitle">Список программ и уроков</p>
+      </div>
+    </header>
+
+    <!-- Таблица -->
+    <div class="table table-courses">
+      <div class="tr head">
+        <div>Название урока</div>
+        <div>Часы</div>
+      </div>
+
+      <div class="tr" *ngFor="let c of lessons">
+        <div class="c-title">
+          <div class="c-name">{{ c.name }}</div>
+        </div>
+
+        <div class="c-hours">
+          {{ c.hours }}
+        </div>
+
+        <div class="actions">
+          <button class="icon-btn" title="Редактировать">
+            <svg viewBox="0 0 24 24">
+              <use href="#pencil"></use>
+            </svg>
+          </button>
+          <button class="icon-btn" title="Удалить">
+            <svg viewBox="0 0 24 24">
+              <use href="#trash"></use>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

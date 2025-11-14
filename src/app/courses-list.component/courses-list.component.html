@@ -58,9 +58,9 @@
       <label class="search">
         <input
           type="text"
-          placeholder="Поиск по названию"
-          (ngModelChange)="onSearchChange($event)"
-        />
+          placeholder="Поиск по названию"/>
+          <!-- (ngModelChange)="onSearchChange($event)" -->
+        <!-- /> -->
         <span class="s-ico">
           <svg viewBox="0 0 24 24">
             <use href="#search"></use>
@@ -68,6 +68,72 @@
         </span>
       </label>
     </div>
+
+    <!-- Форма создания курса (появляется по клику) -->
+    <form
+      class="course-form"
+      *ngIf="isCreating"
+      #createForm="ngForm"
+      (ngSubmit)="onSave(createForm)"
+    >
+      <div class="form-grid form-grid--courses">
+
+        <!-- Название (обязательно) -->
+        <label class="field">
+          <span class="label">Название *</span>
+          <input
+            type="text"
+            class="input"
+            name="name"
+            required
+            [(ngModel)]="newCourse.name"
+            placeholder="Введите название курса"
+          />
+        </label>
+
+        <!-- Часы (необязательно) -->
+        <label class="field">
+          <span class="label">Часы</span>
+          <input
+            type="number"
+            class="input"
+            name="hours"
+            [(ngModel)]="newCourse.hours"
+            placeholder="Например, 40"
+          />
+        </label>
+
+        <!-- Оценка за курс (необязательно) -->
+        <label class="field">
+          <span class="label">Оценка за курс</span>
+          <input
+            type="text"
+            class="input"
+            name="mark"
+            [(ngModel)]="newCourse.mark"
+            placeholder="Например, 5 или «зачёт»"
+          />
+        </label>
+      </div>
+
+      <div class="form-actions">
+        <button
+          class="btn primary"
+          type="submit"
+          [disabled]="createForm.invalid"
+        >
+          Сохранить
+        </button>
+
+        <button
+          class="btn"
+          type="button"
+          (click)="onCancelCreate()"
+        >
+          Отмена
+        </button>
+      </div>
+    </form>
 
     <!-- Таблица курсов -->
     <div class="table courses-table">
@@ -88,7 +154,7 @@
           <button
             class="icon-btn"
             title="Редактировать"
-            (click)="onEdit(course)"
+            (click)="goToEdit(course.id)"
           >
             <svg viewBox="0 0 24 24">
               <use href="#pencil"></use>

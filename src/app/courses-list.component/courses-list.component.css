@@ -298,6 +298,61 @@
 
 /* ---------- АДАПТИВ ---------- */
 
+.course-form {
+  margin-bottom: 20px;
+  max-width: 760px;
+  padding-inline: 8px 32px;
+}
+
+.form-grid--courses {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 24px;
+  row-gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.input {
+  height: 38px;
+  border-radius: 12px;
+  border: 1px solid var(--stroke);
+  padding: 0 14px;
+  background: #f7f8ff;
+  color: var(--text);
+  font: inherit;
+  outline: none;
+}
+
+.form-actions {
+  margin-top: 14px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+/* адаптив формы */
+@media (max-width: 800px) {
+  .form-grid--courses {
+    grid-template-columns: 1fr;
+  }
+
+  .course-form {
+    padding-inline: 8px 16px;
+  }
+}
+
+
 @media (max-width: 900px) {
     :host {
         --tab-width: 156px;

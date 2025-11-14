@@ -3,35 +3,44 @@ import { Course } from '../types/Courses/Course-type';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { CoursesService } from '../services/courses/courses.service';
+import { CourseCreateDTO } from '../types/Courses/Course-createDTO';
+import { FormsModule, NgForm, NgModel, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-courses-list.component',
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './courses-list.component.html',
   styleUrl: './courses-list.component.css',
 })
 export class CoursesListComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private coursesSerivce = inject(CoursesService);
+  isCreating = false;
   search = '';
   courses: Course[] = [];
 
-  ngOnDestroy(): void {
+  newCourse: {
+    name: string;
+    hours?: number | null;
+    mark?: string | null;
+  } = this.clearCourse();
 
-    console.log(this.courses);
-  }
+  
   ngOnInit(): void {
     this.loadCourses();
   }
 
+  ngOnDestroy(): void {
+      console.log(this.courses);
+    }
 
   private loadCoursesMock(): void {
     this.courses = [
-    { id: 1, name: 'Пожарная безопасность', hours: 40 },
-    { id: 2, name: 'Разряд сварщика', hours: 40 },
-    { id: 3, name: 'Первая помощь', hours: 40 },
-  ]
-  }
+      { id: 1, name: 'Пожарная безопасность', hours: 40 },
+      { id: 2, name: 'Разряд сварщика', hours: 40 },
+      { id: 3, name: 'Первая помощь', hours: 40 },
+    ]
+}
 
   private loadCourses(): void {
     this.coursesSerivce.getCourses().subscribe({
@@ -45,14 +54,47 @@ export class CoursesListComponent implements OnInit, OnDestroy {
     })
   }
 
-  onEdit(course: any): void {
-
+  // закрыть форму без сохранения
+  onCancelCreate(): void {
+    this.isCreating = false;
+    this.newCourse = this.clearCourse();
   }
+
+  
+
   onCreate(): void {
-
+    this.isCreating = true;
+    this.newCourse = this.clearCourse();
   }
-  onSearchChange(course: any): void {
 
+  goToEdit(course_id: number): void {
+    this.router.navigate([`/courses/${course_id}/edit`]);
+  }
+
+  // сохранить новый курс
+  onSave(form: NgForm): void {
+    if (form.invalid) {
+      return;
+    }
+
+    const course: Course = {
+      id: this.getMaxId() + 1,
+      name: this.newCourse.name.trim(),
+      hours: this.newCourse.hours ?? null,
+      mark: this.newCourse.mark ?? null,
+    };
+
+    this.courses = [...this.courses, course];
+    this.isCreating = false;
+    console.log('Создан новый курс', course);
+  }
+
+  private clearCourse(): CourseCreateDTO {
+    return { name: '', hours: null, mark: null };
+  }
+
+  private getMaxId(): number {
+    return this.courses.reduce((max, course) => course.id > max ? course.id : max, 0);
   }
 
   navigateToEmployees(): void {
