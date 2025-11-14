@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS organizations (
 
 -- Курсы
 CREATE TABLE IF NOT EXISTS courses (
-    id    INTEGER PRIMARY KEY,          -- если нужен автоинкремент, сделай SERIAL
+    id    SERIAL PRIMARY KEY,
     name  VARCHAR(512) NOT NULL,
     hours INTEGER,
     mark  VARCHAR(32)
@@ -45,9 +45,9 @@ CREATE TABLE IF NOT EXISTS employees (
 
 -- Группы
 CREATE TABLE IF NOT EXISTS groups (
-    id              SERIAL PRIMARY KEY,
-    start_date      DATE,
-    end_date        DATE,
+    id              INTEGER PRIMARY KEY,
+    start_date      DATE NOT NULL,
+    end_date        DATE, -- Must be not null in future
     course_id       INTEGER NOT NULL REFERENCES courses(id),
     organization_id INTEGER NOT NULL REFERENCES organizations(id)
 );
