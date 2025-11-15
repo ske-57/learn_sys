@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS groups (
     start_date      DATE NOT NULL,
     end_date        DATE, -- Must be not null in future
     course_id       INTEGER NOT NULL REFERENCES courses(id)
+    -- Maybe must be organization_id with FK to organizations(id) ?!?!?!
 );
 
 -- Уроки курса
