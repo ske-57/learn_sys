@@ -101,4 +101,12 @@ export class CoursesListComponent implements OnInit, OnDestroy {
   navigateToEmployees(): void {
     this.router.navigate(['/']);
   }
+
+  navigateToCourses(): void {
+    this.router.navigate(['/courses']);
+  }
+
+  navigateToGroups(): void {
+    this.router.navigate(['/groups']);
+  }
 }

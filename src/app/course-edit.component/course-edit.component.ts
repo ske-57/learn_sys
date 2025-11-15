@@ -64,13 +64,7 @@ export class CourseEditComponent implements OnInit, OnDestroy{
   }
 
 
-  navigateToEmployeesList(): void {
-    this.router.navigate(['/']);
-  }
-
-  navigateToCoursesList(): void {
-    this.router.navigate(['/courses']);
-  }
+  
 
   toggleAddLesson(): void {
     this.showAddLesson = !this.showAddLesson;
@@ -101,6 +95,18 @@ export class CourseEditComponent implements OnInit, OnDestroy{
 
   // Can be deleted
   saveAll(): void {
-    this.navigateToCoursesList();
+    this.navigateToCourses();
   }
+  
+  navigateToEmployees(): void {
+    this.router.navigate(['/']);
+  }
+
+  navigateToCourses(): void {
+    this.router.navigate(['/courses']);
+  }
+
+  navigateToGroups(): void {
+    this.router.navigate(['/groups']);
+  } 
 }

@@ -3,10 +3,13 @@ import { EmployeListComponent } from './employee-list.component/employe-list.com
 import { EmployeeCreateComponent } from './employee-create.component/employee-create.component';
 import { CoursesListComponent } from './courses-list.component/courses-list.component';
 import { CourseEditComponent } from './course-edit.component/course-edit.component';
+import { GroupsListComponent } from './groups-list.component/groups-list.component';
 
 export const routes: Routes = [
     { path: '', component: EmployeListComponent, pathMatch: 'full' },
     { path: 'create-employee', component: EmployeeCreateComponent },
     { path: 'courses', component: CoursesListComponent},
     { path: 'courses/:id/edit', component: CourseEditComponent},
+    { path: 'groups', component: GroupsListComponent},
+    { path: '**', redirectTo: '' }
 ];

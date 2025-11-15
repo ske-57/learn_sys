@@ -48,8 +48,7 @@ CREATE TABLE IF NOT EXISTS groups (
     id              INTEGER PRIMARY KEY,
     start_date      DATE NOT NULL,
     end_date        DATE, -- Must be not null in future
-    course_id       INTEGER NOT NULL REFERENCES courses(id),
-    organization_id INTEGER NOT NULL REFERENCES organizations(id)
+    course_id       INTEGER NOT NULL REFERENCES courses(id)
 );
 
 -- Уроки курса

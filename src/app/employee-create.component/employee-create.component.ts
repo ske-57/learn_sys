@@ -34,7 +34,7 @@ export class EmployeeCreateComponent {
     this.employeeService.createEmployee(this.employee).subscribe({
       next: (data) => {
         console.log('Сотрудник создан', data);
-        this.navigateToEmployeeList();
+        this.navigateToEmployees();
       },
       error: (error) => {
         console.error('Ошибка при создании сотрудника', error);
@@ -56,7 +56,7 @@ export class EmployeeCreateComponent {
     })
   }
 
-  navigateToEmployeeList(): void {
+  navigateToEmployees(): void {
     // Логика навигации к списку сотрудников
     this.router.navigate(['/']);
   }
@@ -64,4 +64,8 @@ export class EmployeeCreateComponent {
   navigateToCourses(): void {
     this.router.navigate(['/courses']);
   }
+
+  navigateToGroups(): void {
+    this.router.navigate(['/groups']);
+  } 
 }

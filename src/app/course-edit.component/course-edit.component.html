@@ -3,7 +3,7 @@
   <!-- Верхняя полоса с вкладками -->
   <div class="tabs-wrap">
     <nav class="tabs">
-      <button class="tab" (click)="navigateToEmployeesList()">
+      <button class="tab" (click)="navigateToEmployees()">
         <span class="tab-ico">
           <svg viewBox="0 0 24 24">
             <use href="#plus-circle"></use>
@@ -11,7 +11,7 @@
         </span>
         Сотрудники
       </button>
-      <button class="tab active" (click)="navigateToCoursesList()">
+      <button class="tab active" (click)="navigateToCourses()">
         <span class="tab-ico">
           <svg viewBox="0 0 24 24">
             <use href="#plus-circle"></use>
@@ -19,7 +19,7 @@
         </span>
         Курсы
       </button>
-      <button class="tab">
+      <button class="tab" (click)="navigateToGroups()">
         <span class="tab-ico">
           <svg viewBox="0 0 24 24">
             <use href="#plus-circle"></use>
@@ -101,7 +101,7 @@
     <!-- Действия для всего курса: сохранить/отмена всех изменений -->
     <div class="course-actions">
       <button class="btn primary" type="button" (click)="saveAll()">Сохранить изменения</button>
-      <button class="btn ghost" type="button" (click)="navigateToCoursesList()">Вернуться назад</button>
+      <button class="btn ghost" type="button" (click)="navigateToCourses()">Вернуться назад</button>
     </div>
   </section>
 </div>

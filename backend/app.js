@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express')
 const employeeRouter = require('./routes/employee.routes');
 const courseRouter = require('./routes/course.routes');
+const groupRouter = require('./routes/group.routes');
 const cors = require('cors');
 const http = require('http');
 
@@ -15,6 +16,7 @@ app.use(cors());
 app.get('/health', (req, res) => res.sendStatus(200)); // Дефолт проверка на доступност
 app.use('/api', employeeRouter)
 app.use('/api', courseRouter)
+app.use('/api', groupRouter)
 
 const server = http.createServer(app);
 

@@ -1,0 +1,104 @@
+<!-- ГРУППЫ -->
+<div class="groups-page">
+  <!-- Верхняя полоса с вкладками -->
+  <div class="tabs-wrap">
+    <nav class="tabs">
+      <button class="tab" (click)="navigateToEmployeesList()">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Сотрудники
+      </button>
+
+      <button class="tab" (click)="navigateToCoursesList()">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Курсы
+      </button>
+
+      <button class="tab active">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Группы
+      </button>
+
+      <button class="tab">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Отчеты
+      </button>
+    </nav>
+  </div>
+
+  <!-- Белая панель -->
+  <section class="card">
+    <header class="card-head">
+      <div class="card-head-main">
+        <h1>Управление группами</h1>
+        <!-- <p class="card-subtitle">Поиск и редактирование учебных групп</p> -->
+      </div>
+
+      <button class="btn primary" (click)="createGroup()">
+        Создать группу
+      </button>
+    </header>
+
+    <!-- Поиск -->
+    <div class="toolbar">
+      <label class="search search--wide">
+        <input
+          type="text"
+          placeholder="Поиск по названию"
+          [(ngModel)]="filters.search"
+        />
+        <span class="s-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#search"></use>
+          </svg>
+        </span>
+      </label>
+    </div>
+
+    <!-- Таблица групп -->
+    <div class="table table-groups">
+      <div class="tr head">
+        <div>Группа</div>
+        <div>Курс</div>
+        <div>Организация</div>
+        <div>Дата начала</div>
+        <div>Дата конца</div>
+        <div></div>
+      </div>
+
+      <div class="tr" *ngFor="let g of groups">
+        <div class="g-id">{{ g.id }}</div>
+        <div class="g-course">{{ g.course_name }}</div>
+        <div class="g-org">{{ g.course_id }}</div>
+        <div class="g-date">
+          {{ g.start_date | date: 'dd.MM.yyyy' }}
+        </div>
+        <div class="g-date">
+          {{ g.end_date | date: 'dd.MM.yyyy' }}
+        </div>
+        <div class="actions">
+          <button class="icon-btn" title="Редактировать" (click)="editGroup(g.id)">
+            <svg viewBox="0 0 24 24">
+              <use href="#pencil"></use>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

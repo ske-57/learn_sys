@@ -7,8 +7,6 @@ import { HttpClient } from '@angular/common/http';
 import { LessonCreateDTO } from '../../types/Courses/Lesson-createDTO';
 import { CourseCreateDTO } from '../../types/Courses/Course-createDTO';
 
-export type CourseWithLessons = Course & Lesson[];
-
 @Injectable({
   providedIn: 'root',
 })
