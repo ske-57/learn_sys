@@ -169,6 +169,7 @@
   padding: 10px 16px;
   font-weight: 700;
   cursor: pointer;
+  font-family: inherit;
 }
 
 .btn.primary {
@@ -221,6 +222,7 @@
   background: #e9e1ef;
   padding: 0 56px 0 18px;
   color: var(--text);
+  font-family: inherit;
 }
 
 .search input::placeholder {
@@ -243,7 +245,59 @@
   height: 100%;
 }
 
-/* таблица общая */
+/* ---------- ФОРМА СОЗДАНИЯ ГРУППЫ (как у курсов) ---------- */
+
+.course-form {
+  margin-bottom: 20px;
+  max-width: 760px;
+  padding-inline: 8px 32px;
+}
+
+.form-grid--groups {
+  display: grid;
+  /* четыре поля в одну строку, как плотная сетка */
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: 24px;
+  row-gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.input {
+  height: 38px;
+  border-radius: 12px;
+  border: 1px solid var(--stroke);
+  padding: 0 14px;
+  background: #f7f8ff;
+  color: var(--text);
+  font: inherit;
+  outline: none;
+}
+
+.input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.15);
+}
+
+.form-actions {
+  margin-top: 14px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+/* ---------- ТАБЛИЦА ГРУПП ---------- */
+
 .table {
   margin-top: 12px;
   padding-inline: 12px;
@@ -317,4 +371,26 @@
   width: 20px;
   height: 20px;
   color: #6c58c4;
+}
+
+/* ---------- АДАПТИВ ДЛЯ ФОРМЫ (как у курсов) ---------- */
+
+@media (max-width: 1100px) {
+  .form-grid--groups {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .course-form {
+    padding-inline: 8px 24px;
+  }
+}
+
+@media (max-width: 800px) {
+  .form-grid--groups {
+    grid-template-columns: 1fr;
+  }
+
+  .course-form {
+    padding-inline: 8px 16px;
+  }
 }

@@ -1,10 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, inject, OnInit } from '@angular/core';
+import { FormsModule, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
+
 import { GroupsService } from '../services/groups/groups.service';
 import { GroupWithDetails } from '../types/Groups/GroupWithDetails-type';
 
+import { CoursesService } from '../services/courses/courses.service';
+import { Course } from '../types/Courses/Course-type';
+import { GroupCreateDTO } from '../types/Groups/Group-createDTO';
 
 @Component({
   selector: 'app-groups-list.component',
@@ -13,26 +17,28 @@ import { GroupWithDetails } from '../types/Groups/GroupWithDetails-type';
   templateUrl: './groups-list.component.html',
   styleUrl: './groups-list.component.css',
 })
-export class GroupsListComponent {
+export class GroupsListComponent implements OnInit {
   private router = inject(Router);
   private groupsService = inject(GroupsService);
+  private coursesService = inject(CoursesService);
+
   groups: GroupWithDetails[] = [];
+  courses: Course[] = [];
+
+  isCreating = false;
+
   filters = {
     search: '',
   };
 
+  newGroup: GroupCreateDTO = this.clearGroup();
+
   ngOnInit(): void {
     this.loadGroups();
+    this.loadCourses();
   }
 
-  private loadGroupsMock(): void {
-    this.groups = [
-      { id: 1, start_date: '2023-01-01', end_date: '2023-06-01', course_id: 1, course_name:'Defend' },
-      { id: 2, start_date: '2023-02-01', end_date: '2023-07-01', course_id: 2, course_name:'Attack' },
-      { id: 3, start_date: '2023-03-01', end_date: '2023-08-01', course_id: 3, course_name:'Secure' },
-    ];
-  }
-
+  // загрузка групп
   private loadGroups(): void {
     this.groupsService.getGroups().subscribe({
       next: (data: GroupWithDetails[]) => {
@@ -40,28 +46,74 @@ export class GroupsListComponent {
       },
       error: (error) => {
         console.error('Ошибка при загрузке групп', error);
-      }
+      },
     });
   }
 
-  createGroup(): void {
-    // Логика создания группы
-    console.log('Создание группы');
+  // загрузка курсов для select
+  private loadCourses(): void {
+    this.coursesService.getCourses().subscribe({
+      next: (data: Course[]) => {
+        this.courses = data;
+      },
+      error: (error) => {
+        console.error('Ошибка при загрузке курсов', error);
+      },
+    });
   }
 
+  // открыть форму создания
+  onCreate(): void {
+    this.isCreating = true;
+    this.newGroup = this.clearGroup();
+  }
+
+  // закрыть форму без сохранения
+  onCancelCreate(): void {
+    this.isCreating = false;
+    this.newGroup = this.clearGroup();
+  }
+
+  // сохранить новую группу
+  onSave(form: NgForm): void {
+    if (form.invalid) {
+      return;
+    }
+
+    this.newGroup.end_date = this.newGroup.start_date // временно, пока нет поля ввода (add 10 days)
+
+    this.groupsService.createGroup(this.newGroup).subscribe({
+      next: () => {
+        this.newGroup = this.clearGroup();
+        this.isCreating = false;
+        this.loadGroups();
+      },
+      error: (error) => {
+        console.error('Ошибка при создании группы', error);
+      },
+    });
+  }
+
+  private clearGroup(): GroupCreateDTO {
+    return {
+      id: null!,
+      course_id: null,
+      start_date: '',
+      end_date: null,
+    };
+  }
+
+  // // страница редактирования/добавления сотрудников в группу
   editGroup(groupId: number): void {
-    // Логика редактирования группы
-    console.log('Редактирование группы с ID:', groupId);
+    this.router.navigate([`/groups/${groupId}/edit`]);
+    // на этой странице уже можно делать управление составом группы
   }
 
-
-  navigateToCoursesList(): void {
-    // Логика навигации к списку курсов
+  navigateToCourses(): void {
     this.router.navigate(['/courses']);
   }
 
-  navigateToEmployeesList(): void {
-    // Логика навигации к списку сотрудников
+  navigateToEmployees(): void {
     this.router.navigate(['/employees']);
   }
 
@@ -69,4 +121,5 @@ export class GroupsListComponent {
     // Логика навигации к списку групп
     this.router.navigate(['/groups']);
   }
+
 }

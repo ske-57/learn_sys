@@ -3,7 +3,7 @@
   <!-- Верхняя полоса с вкладками -->
   <div class="tabs-wrap">
     <nav class="tabs">
-      <button class="tab" (click)="navigateToEmployeesList()">
+      <button class="tab" (click)="navigateToEmployees()">
         <span class="tab-ico">
           <svg viewBox="0 0 24 24">
             <use href="#plus-circle"></use>
@@ -12,7 +12,7 @@
         Сотрудники
       </button>
 
-      <button class="tab" (click)="navigateToCoursesList()">
+      <button class="tab" (click)="navigateToCourses()">
         <span class="tab-ico">
           <svg viewBox="0 0 24 24">
             <use href="#plus-circle"></use>
@@ -46,10 +46,9 @@
     <header class="card-head">
       <div class="card-head-main">
         <h1>Управление группами</h1>
-        <!-- <p class="card-subtitle">Поиск и редактирование учебных групп</p> -->
       </div>
 
-      <button class="btn primary" (click)="createGroup()">
+      <button class="btn primary" type="button" (click)="onCreate()">
         Создать группу
       </button>
     </header>
@@ -70,6 +69,86 @@
       </label>
     </div>
 
+    <!-- Форма создания группы -->
+    <form
+      class="course-form group-form"
+      *ngIf="isCreating"
+      #createForm="ngForm"
+      (ngSubmit)="onSave(createForm)"
+    >
+      <div class="form-grid form-grid--groups">
+        <!-- Номер группы -->
+        <label class="field">
+          <span class="label">Номер группы *</span>
+          <input
+            type="number"
+            class="input"
+            name="number"
+            required
+            [(ngModel)]="newGroup.id"
+            placeholder="Например, 1234"
+          />
+        </label>
+
+        <!-- Курс обучения -->
+        <label class="field">
+          <span class="label">Курс обучения *</span>
+          <select
+            class="input"
+            name="course_id"
+            required
+            [(ngModel)]="newGroup.course_id"
+          >
+            <option [ngValue]="null" disabled>Выберите курс</option>
+            <option *ngFor="let c of courses" [ngValue]="c.id">
+              {{ c.name }}
+            </option>
+          </select>
+        </label>
+
+        <!-- Дата начала -->
+        <label class="field">
+          <span class="label">Дата начала *</span>
+          <input
+            type="date"
+            class="input"
+            name="start_date"
+            required
+            [(ngModel)]="newGroup.start_date"
+          />
+        </label>
+
+        <!-- Дата конца -->
+        <label class="field">
+          <span class="label">Дата конца</span>
+          <input
+            type="date"
+            class="input"
+            name="end_date"
+            [(ngModel)]="newGroup.end_date"
+          />
+        </label>
+      </div>
+
+      <div class="form-actions">
+        <button
+          class="btn primary"
+          type="submit"
+          [disabled]="createForm.invalid"
+        >
+          Сохранить
+        </button>
+
+        <button
+          class="btn"
+          type="button"
+          (click)="onCancelCreate()"
+        >
+          Отмена
+        </button>
+      </div>
+    </form>
+
     <!-- Таблица групп -->
     <div class="table table-groups">
       <div class="tr head">
@@ -82,9 +161,10 @@
       </div>
 
       <div class="tr" *ngFor="let g of groups">
+        <!-- предполагаю, что теперь в GroupWithDetails есть поле number -->
         <div class="g-id">{{ g.id }}</div>
         <div class="g-course">{{ g.course_name }}</div>
-        <div class="g-org">{{ g.course_id }}</div>
+        <div class="g-org">{{ g.course_id }} - course id</div>
         <div class="g-date">
           {{ g.start_date | date: 'dd.MM.yyyy' }}
         </div>
@@ -92,7 +172,11 @@
           {{ g.end_date | date: 'dd.MM.yyyy' }}
         </div>
         <div class="actions">
-          <button class="icon-btn" title="Редактировать" (click)="editGroup(g.id)">
+          <button
+            class="icon-btn"
+            title="Редактировать"
+            (click)="editGroup(g.id)"
+          >
             <svg viewBox="0 0 24 24">
               <use href="#pencil"></use>
             </svg>

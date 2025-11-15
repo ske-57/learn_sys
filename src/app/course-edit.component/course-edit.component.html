@@ -83,12 +83,12 @@
 
       <div class="add-lesson-form" *ngIf="showAddLesson">
         <div class="field">
-          <label class="field-label">Название урока</label>
+          <label class="field-label">Название урока *</label>
           <input name="lessonName" class="field-input" type="text" [(ngModel)]="newLesson.name" />
         </div>
 
         <div class="field">
-          <label class="field-label">Часы</label>
+          <label class="field-label">Часы * </label>
           <input name="lessonHours" class="field-input" type="number" min="0" [(ngModel)]="newLesson.hours" />
         </div>
 

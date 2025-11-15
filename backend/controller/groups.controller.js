@@ -5,21 +5,31 @@ class GroupsController {
     async CreateGroup(req, res) {
         try {
             const {
+                id,
                 start_date,
                 end_date,
                 course_id
             } = req.body
 
+            if (!id) {
+                return res.status(400).json({ error: 'ID should not be provided when creating a new group' });
+            }
+
             // required fields according to DB schema
-            if (!start_date || !course_id) {
-                return res.status(400).json({ error: 'Missing required fields: start_date, course_id' })
+            if (!course_id) {
+                return res.status(400).json({ error: 'Missing required fields: course' })
+            }
+
+            if (!start_date) {
+                return res.status(400).json({ error: 'Missing required field: start_date' })
             }
 
             const result = await db.query(
                 `INSERT INTO groups(
-                    start_date, end_date, course_id
-                ) VALUES($1,$2,$3) RETURNING *`,
+                    id, start_date, end_date, course_id
+                ) VALUES($1,$2,$3,$4) RETURNING *`,
                 [
+                    id,
                     start_date,
                     end_date || null,
                     course_id
