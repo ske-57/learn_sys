@@ -76,17 +76,18 @@ export class CoursesListComponent implements OnInit, OnDestroy {
     if (form.invalid) {
       return;
     }
-
-    const course: Course = {
-      id: this.getMaxId() + 1,
-      name: this.newCourse.name.trim(),
-      hours: this.newCourse.hours ?? null,
-      mark: this.newCourse.mark ?? null,
-    };
-
-    this.courses = [...this.courses, course];
+    this.coursesSerivce.createCourse(this.newCourse).subscribe({
+      next: (data) => {
+        this.loadCourses();
+        this.newCourse = this.clearCourse();
+      },
+      error: (error) => {
+        console.error('Ошибка при создании курса', error);
+      }
+    });
+    
     this.isCreating = false;
-    console.log('Создан новый курс', course);
+    console.log('Создан новый курс', this.newCourse);
   }
 
   private clearCourse(): CourseCreateDTO {

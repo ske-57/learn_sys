@@ -77,5 +77,31 @@
         </div>
       </div>
     </div>
+    <!-- Добавление урока -->
+    <div class="add-lesson">
+      <button class="btn primary" type="button" (click)="toggleAddLesson()">Добавить урок</button>
+
+      <div class="add-lesson-form" *ngIf="showAddLesson">
+        <div class="field">
+          <label class="field-label">Название урока</label>
+          <input name="lessonName" class="field-input" type="text" [(ngModel)]="newLesson.name" />
+        </div>
+
+        <div class="field">
+          <label class="field-label">Часы</label>
+          <input name="lessonHours" class="field-input" type="number" min="0" [(ngModel)]="newLesson.hours" />
+        </div>
+
+        <div class="form-actions-lesson">
+          <button class="btn primary" type="button" (click)="saveLesson()">Сохранить</button>
+          <button class="btn ghost" type="button" (click)="cancelAdd()">Отмена</button>
+        </div>
+      </div>
+    </div>
+    <!-- Действия для всего курса: сохранить/отмена всех изменений -->
+    <div class="course-actions">
+      <button class="btn primary" type="button" (click)="saveAll()">Сохранить изменения</button>
+      <button class="btn ghost" type="button" (click)="navigateToCoursesList()">Вернуться назад</button>
+    </div>
   </section>
 </div>

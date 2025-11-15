@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, Host, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Course } from '../types/Courses/Course-type';
 import { CoursesService } from '../services/courses/courses.service';
 import { Lesson } from '../types/Courses/Lesson-type';
+import { LessonCreateDTO } from '../types/Courses/Lesson-createDTO';
 
 @Component({
   selector: 'app-course-edit.component',
@@ -23,9 +24,11 @@ export class CourseEditComponent implements OnInit, OnDestroy{
     id: null!,
     name: '',
   }
+  showAddLesson = false;
+  newLesson: LessonCreateDTO = {name: '', hours: null! };
 
   ngOnDestroy(): void {
-    
+    // Cleanup if needed
   }
   
   ngOnInit(): void {
@@ -50,6 +53,7 @@ export class CourseEditComponent implements OnInit, OnDestroy{
         next: (data : Course) => {
           this.course = data;
           this.lessons = data.lessons || [];
+          this.courseId = course_id;
           console.log(data);
         },
         error: (error) => {
@@ -66,5 +70,37 @@ export class CourseEditComponent implements OnInit, OnDestroy{
 
   navigateToCoursesList(): void {
     this.router.navigate(['/courses']);
+  }
+
+  toggleAddLesson(): void {
+    this.showAddLesson = !this.showAddLesson;
+    if (!this.showAddLesson) this.newLesson = { name: '', hours: null!};
+  }
+
+  saveLesson(): void {
+    if (!this.newLesson.name || this.newLesson.name.trim() === '') {
+      console.error(`Name cant be empty ${this.newLesson.name}`);
+      return;
+    }
+    if (!this.newLesson.hours || this.newLesson.hours < 0) {
+      console.error(`Hours cant be less than zero or empty ${this.newLesson.hours}`);
+      return;
+    }
+    this.coursesService.addLesson(this.courseId, this.newLesson).subscribe({
+      next: (data) => {
+        this.toggleAddLesson();
+        this.loadCurrCourse(this.courseId)
+      },
+      error: (err) => console.error('Failed to add lesson', err)
+    })
+  }
+
+  cancelAdd(): void {
+    this.toggleAddLesson();
+  }
+
+  // Can be deleted
+  saveAll(): void {
+    this.navigateToCoursesList();
   }
 }

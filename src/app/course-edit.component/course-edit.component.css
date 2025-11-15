@@ -311,6 +311,58 @@
   overflow: auto;
 }
 
+/* Add lesson block */
+.add-lesson {
+  /* reduce vertical spacing so button sits closer to the table */
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.add-lesson-form {
+  display: grid;
+  grid-template-columns: 1fr 160px auto;
+  gap: 12px;
+  align-items: end;
+  margin-top: 6px;
+  width: min(100%, 920px);
+}
+
+.field-label { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+.field-input {
+  height: 40px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--stroke);
+  background: #fff;
+  outline: none;
+}
+
+/* smaller add-lesson trigger button */
+.add-lesson > .btn.primary {
+  margin-left: 30%;
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 10px;
+  max-width: 200px;
+  align-self: flex;
+}
+
+.form-actions-lesson {
+  display: flex;
+  gap: 12px;
+}
+
+/* actions for whole course (save/cancel all) */
+.course-actions {
+  margin-top: 18px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex;
+  width: min(100%, 920px);
+}
+
 .tr {
   display: grid;
   grid-template-columns: 1.3fr 0.8fr 0.5fr;
