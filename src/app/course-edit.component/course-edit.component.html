@@ -1,0 +1,107 @@
+<!-- КУРСЫ -->
+<div class="courses-page">
+  <!-- Верхняя полоса с вкладками -->
+  <div class="tabs-wrap">
+    <nav class="tabs">
+      <button class="tab" (click)="navigateToEmployees()">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Сотрудники
+      </button>
+      <button class="tab active" (click)="navigateToCourses()">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Курсы
+      </button>
+      <button class="tab" (click)="navigateToGroups()">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Группы
+      </button>
+      <button class="tab">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Отчеты
+      </button>
+    </nav>
+  </div>
+
+  <!-- Белая панель -->
+  <section class="card">
+    <header class="card-head">
+      <div class="card-head-main">
+        <h1>Уроки курса - {{ course.name }}</h1>
+        <p class="card-subtitle">Список программ и уроков</p>
+      </div>
+    </header>
+
+    <!-- Таблица -->
+    <div class="table table-courses">
+      <div class="tr head">
+        <div>Название урока</div>
+        <div>Часы</div>
+      </div>
+
+      <div class="tr" *ngFor="let c of lessons">
+        <div class="c-title">
+          <div class="c-name">{{ c.name }}</div>
+        </div>
+
+        <div class="c-hours">
+          {{ c.hours }}
+        </div>
+
+        <div class="actions">
+          <button class="icon-btn" title="Редактировать">
+            <svg viewBox="0 0 24 24">
+              <use href="#pencil"></use>
+            </svg>
+          </button>
+          <button class="icon-btn" title="Удалить">
+            <svg viewBox="0 0 24 24">
+              <use href="#trash"></use>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Добавление урока -->
+    <div class="add-lesson">
+      <button class="btn primary" type="button" (click)="toggleAddLesson()">Добавить урок</button>
+
+      <div class="add-lesson-form" *ngIf="showAddLesson">
+        <div class="field">
+          <label class="field-label">Название урока *</label>
+          <input name="lessonName" class="field-input" type="text" [(ngModel)]="newLesson.name" />
+        </div>
+
+        <div class="field">
+          <label class="field-label">Часы * </label>
+          <input name="lessonHours" class="field-input" type="number" min="0" [(ngModel)]="newLesson.hours" />
+        </div>
+
+        <div class="form-actions-lesson">
+          <button class="btn primary" type="button" (click)="saveLesson()">Сохранить</button>
+          <button class="btn ghost" type="button" (click)="cancelAdd()">Отмена</button>
+        </div>
+      </div>
+    </div>
+    <!-- Действия для всего курса: сохранить/отмена всех изменений -->
+    <div class="course-actions">
+      <button class="btn primary" type="button" (click)="saveAll()">Сохранить изменения</button>
+      <button class="btn ghost" type="button" (click)="navigateToCourses()">Вернуться назад</button>
+    </div>
+  </section>
+</div>

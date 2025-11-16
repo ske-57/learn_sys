@@ -1,0 +1,200 @@
+<div class="employees-page">
+
+    <!-- Верхняя полоса с вкладками -->
+    <div class="tabs-wrap">
+        <nav class="tabs">
+            <button class="tab active" (click)="navigateToEmployees()">
+                <span class="tab-ico">
+                    <svg viewBox="0 0 24 24">
+                        <use href="#plus-circle"></use>
+                    </svg>
+                </span>
+                Сотрудники
+            </button>
+            <button class="tab" (click)="navigateToCourses()">
+                <span class="tab-ico">
+                    <svg viewBox="0 0 24 24">
+                        <use href="#plus-circle"></use>
+                    </svg>
+                </span>
+                Курсы
+            </button>
+            <button class="tab" (click)="navigateToCourses()">
+                <span class="tab-ico">
+                    <svg viewBox="0 0 24 24">
+                        <use href="#plus-circle"></use>
+                    </svg>
+                </span>
+                Группы
+            </button>
+            <button class="tab">
+                <span class="tab-ico">
+                    <svg viewBox="0 0 24 24">
+                        <use href="#plus-circle"></use>
+                    </svg>
+                </span>
+                Отчеты
+            </button>
+        </nav>
+    </div>
+
+
+    <!-- Белая панель -->
+    <section class="card">
+
+        <!-- Заголовок -->
+        <header class="card-head">
+            <h1>Добавление сотрудника</h1>
+
+            <!-- <button class="btn primary" (click)="onSubmit(form)" form="form">
+                Сохранить
+            </button> -->
+        </header>
+
+        <!-- Форма -->
+        <form #form="ngForm" class="add-form" id="form">
+
+            <div class="form-grid">
+
+                <!-- Фамилия* -->
+                <label class="field">
+                    <span class="label">Фамилия *</span>
+                    <input
+                        type="text"
+                        name="last_name"
+                        [(ngModel)]="employee.last_name"
+                        required
+                        class="input"
+                        placeholder="Введите фамилию"
+                    />
+                </label>
+
+                <!-- Имя* -->
+                <label class="field">
+                    <span class="label">Имя *</span>
+                    <input
+                        type="text"
+                        name="name"
+                        [(ngModel)]="employee.name"
+                        required
+                        class="input"
+                        placeholder="Введите имя"
+                    />
+                </label>
+
+                <!-- Отчество -->
+                <label class="field">
+                    <span class="label">Отчество</span>
+                    <input
+                        type="text"
+                        name="middle_name"
+                        [(ngModel)]="employee.middle_name"
+                        class="input"
+                        placeholder="Введите отчество"
+                    />
+                </label>
+
+                <!-- СНИЛС -->
+                <label class="field">
+                    <span class="label">СНИЛС</span>
+                    <input
+                        type="text"
+                        name="snils"
+                        [(ngModel)]="employee.snils"
+                        class="input"
+                        placeholder="Введите СНИЛС"
+                    />
+                </label>
+
+                <!-- Организация* -->
+                <label class="field">
+                    <span class="label">Организация *</span>
+                    <select
+                        name="organization_id"
+                        [(ngModel)]="employee.organization_id"
+                        required
+                        class="input"
+                        (focus)="loadOrganizations()"
+                    >
+                        <option [ngValue]="null" disabled [selected]="!employee.organization_id">Выберите организацию</option>
+                        <option *ngFor="let org of organizations" [ngValue]="org.id">{{ org.name }}</option>
+                    </select>
+                </label>
+
+                <!-- Должность -->
+                <label class="field">
+                    <span class="label">Должность</span>
+                    <input
+                        type="text"
+                        name="position"
+                        [(ngModel)]="employee.grade"
+                        class="input"
+                        placeholder="Введите должность"
+                    />
+                </label>
+
+                <!-- Дата рождения -->
+                <label class="field">
+                    <span class="label">Дата рождения</span>
+                    <input
+                        type="date"
+                        name="birth_date"
+                        [(ngModel)]="employee.birth_date"
+                        class="input"
+                    />
+                </label>
+
+                <!-- Телефон -->
+                <label class="field">
+                    <span class="label">Телефон</span>
+                    <input
+                        type="text"
+                        name="phone"
+                        [(ngModel)]="employee.phone"
+                        class="input"
+                        placeholder="8 800 555 35 35"
+                    />
+                </label>
+
+                <!-- Email -->
+                <label class="field">
+                    <span class="label">E-mail</span>
+                    <input
+                        type="email"
+                        name="email"
+                        [(ngModel)]="employee.email"
+                        class="input"
+                        placeholder="example@mail.ru"
+                    />
+                </label>
+
+                <!-- Образование -->
+                <label class="field">
+                    <span class="label">Образование *</span>
+                    <input
+                        type="text"
+                        name="education"
+                        [(ngModel)]="employee.education"
+                        required
+                        class="input"
+                        placeholder="Введите образование"
+                    />
+                </label>
+
+            </div>
+
+            <!-- Кнопки -->
+            <div class="form-actions">
+                <button class="btn primary" type="submit" (click)="onSubmit(form)">
+                    Сохранить
+                </button>
+
+                <button class="btn" type="button" (click)="form.resetForm();">
+                    Очистить
+                </button>
+            </div>
+
+        </form>
+
+    </section>
+</div>

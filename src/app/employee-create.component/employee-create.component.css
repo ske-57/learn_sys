@@ -1,0 +1,477 @@
+@import url('https://fonts.googleapis.com/css2?family=ABeeZee:ital@0;1&display=swap');
+
+:host {
+    --bg: #F6FAFF;
+    /* светло-голубой фон страницы (чётко отличается от панели) */
+    --header: #e0e0ec;
+    /* голубая полоса вкладок, контрастна чипам и панели */
+    --panel: #FFFFFF;
+    /* белая карточка */
+    --text: #1E2233;
+    /* тёмный текст для хорошей читабельности */
+    --muted: #5F6B88;
+    /* подписи/шапки столбцов (чуть темнее и холоднее) */
+    --stroke: #CBD6FF;
+    /* контрастнее прежнего, холодный бордер */
+    --primary: #4F46E5;
+    /* насыщенный индиго для кнопок/акцентов */
+    --primary-press: #3E34CC;
+    /* нажатое состояние — темнее основного */
+    --chip: #E9E0FF;
+    /* лиловый фон активной вкладки — отличим от голубого header */
+    --shadow: 0 6px 20px rgba(79, 70, 229, .12);
+    /* тень в тон primary */
+
+    /* размеры табов по умолчанию */
+    --tab-width: 172px;
+    --tab-height: 40px;
+
+    color: var(--text);
+    display: block;
+}
+
+/* фон страницы */
+.employees-page {
+    min-height: 100dvh;
+    background: var(--bg);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* верхняя полоса с вкладками — ЧУТЬ НИЖЕ, ЦЕНТР */
+.tabs-wrap {
+    background: var(--header);
+    border-radius: 12px;
+    padding: 12px 20px;
+    /* компактнее по высоте */
+    min-height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tabs {
+    display: flex;
+    gap: 56px;
+    /* больше промежуток между кнопками */
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* ТАБЫ: одинаковые размеры, шире и ниже по высоте, ховер */
+.tab {
+    /* одинаковая ширина/высота для всех кнопок */
+    width: var(--tab-width);
+    min-width: var(--tab-width);
+    max-width: var(--tab-width);
+    height: var(--tab-height);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* центрируем иконку и текст */
+    gap: 12px;
+
+    padding: 0 14px;
+    /* небольшой боковой паддинг, высоту задаём фиксированно */
+    border-radius: 18px;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+
+    background: transparent;
+    border: 0;
+    color: #3b2f63;
+
+    transition: background-color .15s ease, box-shadow .15s ease;
+}
+
+.tab:hover {
+    background: #cbb9de;
+    /* лёгкая подсветка при наведении */
+    box-shadow: inset 0 -1px 0 rgba(255, 255, 255, .7);
+}
+
+.tab.active {
+    background: var(--chip);
+    box-shadow: inset 0 -1px 0 rgba(255, 255, 255, .7);
+}
+
+.tab.active:hover {
+    background: #e6d9f1;
+    /* активная чуть темнее при ховере */
+}
+
+.tab-ico {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #fff;
+    display: grid;
+    place-items: center;
+    box-shadow: inset 0 0 0 2px #d9c9f4;
+}
+
+.tab-ico svg {
+    width: 14px;
+    height: 14px;
+    color: #6c58c4;
+}
+
+/* карточка — занимает остаток экрана, список/форма тянутся */
+.card {
+    background: var(--panel);
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+    padding: 24px 28px 28px;
+    margin-top: 20px;
+
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    /* растягиваем под экран */
+    min-height: 0;
+    /* важно для корректного overflow у .table */
+}
+
+.card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.card-head h1 {
+    margin: 0;
+    font-size: 38px;
+    font-weight: 700;
+    margin-left: 12px;
+    /* «Список сотрудников» / «Добавление сотрудника» чуть правее */
+}
+
+/* базовая кнопка */
+.btn {
+    appearance: none;
+    border: 0;
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* primary-кнопка */
+.btn.primary {
+    color: #fff;
+    background: var(--primary);
+    box-shadow: 0 6px 14px rgba(111, 81, 213, .35);
+    transition: background-color .15s ease, transform .02s ease;
+}
+
+.btn.primary:hover {
+    background: #7a5ce0;
+    /* лёгкий ховер */
+}
+
+.btn.primary:active {
+    background: var(--primary-press);
+    transform: translateY(1px);
+}
+
+/* только в шапке делаем кнопку ещё больше */
+.card-head .btn.primary {
+    font-size: 16px;
+    padding: 12px 22px;
+    /* шире, выше кликабельность */
+    border-radius: 14px;
+    min-height: 44px;
+}
+
+/* ---------- ПОИСК (СПИСОК СОТРУДНИКОВ) ---------- */
+
+.toolbar {
+    margin: 8px 0 18px;
+}
+
+.search {
+    position: relative;
+    width: 320px;
+    max-width: 100%;
+    display: block;
+}
+
+.search input {
+    width: 100%;
+    height: 38px;
+    border-radius: 19px;
+    border: none;
+    outline: none;
+    background: #e9e1ef;
+    padding: 0 56px 0 16px;
+    /* правый отступ больше ширины иконки */
+    color: var(--text);
+}
+
+.search input::placeholder {
+    color: #887fa2;
+}
+
+.s-ico {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    translate: 0 -50%;
+    width: 22px;
+    height: 22px;
+    color: #6e64a0;
+    pointer-events: none;
+    /* не мешает клику по инпуту */
+}
+
+.s-ico svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* ---------- ТАБЛИЦА (СПИСОК СОТРУДНИКОВ) ---------- */
+
+.table {
+    margin-top: 12px;
+    padding-inline: 12px;
+    width: min(100%, 920px);
+    /* ограничиваем ширину */
+    flex: 1 1 auto;
+    /* тянется по высоте */
+    min-height: 0;
+    overflow: auto;
+    /* прокрутка только списка */
+}
+
+.tr {
+    display: grid;
+    grid-template-columns: 1.3fr 0.8fr 0.5fr;
+    align-items: center;
+    padding: 12px 0;
+}
+
+.tr:last-child {
+    border-bottom: 0;
+}
+
+.tr.head {
+    color: var(--muted);
+    font-weight: 600;
+    border-bottom: none;
+    margin-bottom: 6px;
+}
+
+/* действия */
+.actions {
+    display: flex;
+    gap: 14px;
+}
+
+.icon-btn {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    background: #fff;
+    border-radius: 50%;
+    border: 1px solid var(--stroke);
+    transition: background-color .15s ease;
+}
+
+.icon-btn:hover {
+    background: #f7f2fc;
+}
+
+.icon-btn svg {
+    width: 20px;
+    height: 20px;
+    color: #6c58c4;
+}
+
+/* ---------- ФОРМА ДОБАВЛЕНИЯ СОТРУДНИКА ---------- */
+
+.add-form {
+    margin-top: 8px;
+    max-width: 920px;
+    /* чтобы визуально было как таблица на первой странице */
+    padding-inline: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* сетка полей формы */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 24px;
+    row-gap: 16px;
+}
+
+/* одно поле */
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* подпись над полем */
+.label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+}
+
+/* инпуты в стиле всей системы */
+.input {
+    height: 38px;
+    border-radius: 12px;
+    border: 1px solid var(--stroke);
+    padding: 0 14px;
+    background: #f7f8ff;
+    color: var(--text);
+    font: inherit;
+    outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+}
+
+.input::placeholder {
+    color: #9aa3c0;
+}
+
+/* date-инпут тоже под общий стиль */
+.input[type="date"] {
+    padding-inline: 10px;
+}
+
+/* фокус по аналогии с кнопками/чипами */
+.input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 1px rgba(79, 70, 229, .18);
+    background: #ffffff;
+}
+
+/* состояние ошибки (Angular: .ng-invalid.ng-touched) */
+.input.ng-invalid.ng-touched {
+    border-color: #e53935;
+    box-shadow: 0 0 0 1px rgba(229, 57, 53, .12);
+}
+
+/* нижний блок с кнопками */
+.form-actions {
+    margin-top: 8px;
+    padding-top: 16px;
+    border-top: 1px solid #edf0ff;
+    display: flex;
+    gap: 12px;
+    justify-content: flex;
+}
+
+/* вторичная кнопка — обычный светлый фон */
+.form-actions .btn:not(.primary) {
+    background: #eef0ff;
+    color: var(--muted);
+    box-shadow: none;
+    transition: background-color .15s ease;
+}
+
+.form-actions .btn:not(.primary):hover {
+    background: #e0e3ff;
+}
+
+/* ---------- АДАПТИВ ---------- */
+
+@media (max-width: 900px) {
+
+    /* На средних экранах сделаем табы чуть компактнее, но одинакового размера */
+    :host {
+        --tab-width: 156px;
+        --tab-height: 38px;
+    }
+
+    .tabs {
+        gap: 44px;
+    }
+
+    /* форма — в две колонки */
+    .form-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 20px;
+    }
+}
+
+@media (max-width: 640px) {
+    :host {
+        --tab-width: 140px;
+        --tab-height: 36px;
+    }
+
+    .tabs {
+        gap: 28px;
+        /* на узких экранах промежуток поменьше, чтобы не ломалось */
+    }
+
+    .card-head h1 {
+        font-size: 28px;
+        margin-left: 10px;
+        /* сохраняем «чуть правее» и на мобилках */
+    }
+
+    .card-head .btn.primary {
+        padding: 11px 18px;
+        min-height: 42px;
+        font-size: 15px;
+    }
+
+    .tr {
+        grid-template-columns: 1fr 0.8fr auto;
+    }
+
+    /* форма — в одну колонку */
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .add-form {
+        padding-inline: 0;
+    }
+
+    .form-actions {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 460px) {
+    :host {
+        --tab-width: 48%;
+        --tab-height: 36px;
+    }
+
+    /* По 2 таба в строке на очень узких экранах */
+    .tab {
+        width: var(--tab-width);
+        min-width: 0;
+        max-width: none;
+    }
+
+    .tr {
+        grid-template-columns: 1fr;
+        row-gap: 6px;
+    }
+
+    .actions {
+        justify-self: start;
+    }
+
+    .table {
+        padding-inline: 10px;
+        /* чуть меньше боковые отступы на узких экранах */
+    }
+}

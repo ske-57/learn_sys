@@ -1,0 +1,168 @@
+<div class="employees-page">
+
+  <!-- Верхняя полоса с вкладками -->
+  <div class="tabs-wrap">
+    <nav class="tabs">
+      <button class="tab" (click)="navigateToEmployees()">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Сотрудники
+      </button>
+
+      <button class="tab active" (click)="navigateToCourses()">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Курсы
+      </button>
+
+      <button class="tab" (click)="navigateToGroups()">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Группы
+      </button>
+
+      <button class="tab">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Отчеты
+      </button>
+    </nav>
+  </div>
+
+  <!-- Белая панель -->
+  <section class="card card--courses">
+
+    <!-- Заголовок + кнопка -->
+    <header class="card-head">
+      <h1>Управление курсами</h1>
+
+      <button class="btn primary" (click)="onCreate()">
+        Создать курс
+      </button>
+    </header>
+
+    <!-- Поиск по названию -->
+    <div class="toolbar">
+      <label class="search">
+        <input
+          type="text"
+          placeholder="Поиск по названию"/>
+          <!-- (ngModelChange)="onSearchChange($event)" -->
+        <!-- /> -->
+        <span class="s-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#search"></use>
+          </svg>
+        </span>
+      </label>
+    </div>
+
+    <!-- Форма создания курса (появляется по клику) -->
+    <form
+      class="course-form"
+      *ngIf="isCreating"
+      #createForm="ngForm"
+      (ngSubmit)="onSave(createForm)"
+    >
+      <div class="form-grid form-grid--courses">
+
+        <!-- Название (обязательно) -->
+        <label class="field">
+          <span class="label">Название *</span>
+          <input
+            type="text"
+            class="input"
+            name="name"
+            required
+            [(ngModel)]="newCourse.name"
+            placeholder="Введите название курса"
+          />
+        </label>
+
+        <!-- Часы (необязательно) -->
+        <label class="field">
+          <span class="label">Часы</span>
+          <input
+            type="number"
+            class="input"
+            name="hours"
+            [(ngModel)]="newCourse.hours"
+            placeholder="Например, 40"
+          />
+        </label>
+
+        <!-- Оценка за курс (необязательно) -->
+        <label class="field">
+          <span class="label">Оценка за курс</span>
+          <input
+            type="text"
+            class="input"
+            name="mark"
+            [(ngModel)]="newCourse.mark"
+            placeholder="Например, 5 или «зачёт»"
+          />
+        </label>
+      </div>
+
+      <div class="form-actions">
+        <button
+          class="btn primary"
+          type="submit"
+          [disabled]="createForm.invalid"
+        >
+          Сохранить
+        </button>
+
+        <button
+          class="btn"
+          type="button"
+          (click)="onCancelCreate()"
+        >
+          Отмена
+        </button>
+      </div>
+    </form>
+
+    <!-- Таблица курсов -->
+    <div class="table courses-table">
+      <div class="tr head">
+        <div>Название</div>
+        <div class="col-hours">Часы</div>
+        <div class="col-actions">Действия</div>
+      </div>
+
+      <div class="tr" *ngFor="let course of courses">
+        <div class="course-name">
+          {{ course.name }}
+        </div>
+        <div class="course-hours">
+          {{ course.hours || 0}}
+        </div>
+        <div class="actions">
+          <button
+            class="icon-btn"
+            title="Редактировать"
+            (click)="goToEdit(course.id)"
+          >
+            <svg viewBox="0 0 24 24">
+              <use href="#pencil"></use>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </section>
+</div>

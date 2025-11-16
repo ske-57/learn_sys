@@ -1,7 +1,9 @@
 require('dotenv').config();
 
 const express = require('express')
-const userRouter = require('./routes/user.routes')
+const employeeRouter = require('./routes/employee.routes');
+const courseRouter = require('./routes/course.routes');
+const groupRouter = require('./routes/group.routes');
 const cors = require('cors');
 const http = require('http');
 
@@ -12,7 +14,9 @@ app.use(express.json())
 app.use(cors());
 
 app.get('/health', (req, res) => res.sendStatus(200)); // Дефолт проверка на доступност
-app.use('/api', userRouter)
+app.use('/api', employeeRouter)
+app.use('/api', courseRouter)
+app.use('/api', groupRouter)
 
 const server = http.createServer(app);
 

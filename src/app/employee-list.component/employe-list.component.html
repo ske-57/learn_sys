@@ -1,0 +1,86 @@
+<!-- ЧИСТЫЙ ШАБЛОН БЕЗ <path d> -->
+<div class="employees-page">
+    <!-- Верхняя полоса с вкладками -->
+    <div class="tabs-wrap">
+        <nav class="tabs">
+            <button class="tab active">
+                <span class="tab-ico">
+                    <svg viewBox="0 0 24 24">
+                        <use href="#plus-circle"></use>
+                    </svg>
+                </span>
+                Сотрудники
+            </button>
+            <button class="tab" (click)="navigateToCourses()">
+                <span class="tab-ico">
+                    <svg viewBox="0 0 24 24">
+                        <use href="#plus-circle"></use>
+                    </svg>
+                </span>
+                Курсы
+            </button>
+            <button class="tab" (click)="navigateToGroups()">
+                <span class="tab-ico">
+                    <svg viewBox="0 0 24 24">
+                        <use href="#plus-circle"></use>
+                    </svg>
+                </span>
+                Группы
+            </button>
+            <button class="tab">
+                <span class="tab-ico">
+                    <svg viewBox="0 0 24 24">
+                        <use href="#plus-circle"></use>
+                    </svg>
+                </span>
+                Отчеты
+            </button>
+        </nav>
+    </div>
+
+    <!-- Белая панель -->
+    <section class="card">
+        <header class="card-head">
+            <h1>Список сотрудников</h1>
+            <button class="btn primary" (click)="navigateToEmployeeCreate()">Добавить</button>
+        </header>
+
+        <!-- Поиск -->
+        <div class="toolbar">
+            <label class="search">
+                <input placeholder="Поиск по названию" />
+                <span class="s-ico">
+                    <svg viewBox="0 0 24 24">
+                        <use href="#search"></use>
+                    </svg>
+                </span>
+            </label>
+        </div>
+
+        <!-- Таблица -->
+        <div class="table">
+            <div class="tr head">
+                <div>ФИО</div>
+                <div>Организация</div>
+                <div>Действия</div>
+            </div>
+
+            <div class="tr" *ngFor="let e of employees">
+                <div class="fio">{{ e.last_name }} {{ e.name }} {{ e.middle_name }}</div>
+                <div class="org">{{ e.organization_name }}</div>
+                <div class="actions">
+                    <button class="icon-btn" title="Редактировать">
+                        <svg viewBox="0 0 24 24">
+                            <use href="#pencil"></use>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" title="Удалить">
+                        <svg viewBox="0 0 24 24">
+                            <use href="#trash"></use>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

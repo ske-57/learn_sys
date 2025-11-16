@@ -1,0 +1,188 @@
+<!-- ГРУППЫ -->
+<div class="groups-page">
+  <!-- Верхняя полоса с вкладками -->
+  <div class="tabs-wrap">
+    <nav class="tabs">
+      <button class="tab" (click)="navigateToEmployees()">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Сотрудники
+      </button>
+
+      <button class="tab" (click)="navigateToCourses()">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Курсы
+      </button>
+
+      <button class="tab active">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Группы
+      </button>
+
+      <button class="tab">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Отчеты
+      </button>
+    </nav>
+  </div>
+
+  <!-- Белая панель -->
+  <section class="card">
+    <header class="card-head">
+      <div class="card-head-main">
+        <h1>Управление группами</h1>
+      </div>
+
+      <button class="btn primary" type="button" (click)="onCreate()">
+        Создать группу
+      </button>
+    </header>
+
+    <!-- Поиск -->
+    <div class="toolbar">
+      <label class="search search--wide">
+        <input
+          type="text"
+          placeholder="Поиск по названию"
+          [(ngModel)]="filters.search"
+        />
+        <span class="s-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#search"></use>
+          </svg>
+        </span>
+      </label>
+    </div>
+
+    <!-- Форма создания группы -->
+    <form
+      class="course-form group-form"
+      *ngIf="isCreating"
+      #createForm="ngForm"
+      (ngSubmit)="onSave(createForm)"
+    >
+      <div class="form-grid form-grid--groups">
+        <!-- Номер группы -->
+        <label class="field">
+          <span class="label">Номер группы *</span>
+          <input
+            type="number"
+            class="input"
+            name="number"
+            required
+            [(ngModel)]="newGroup.id"
+            placeholder="Например, 1234"
+          />
+        </label>
+
+        <!-- Курс обучения -->
+        <label class="field">
+          <span class="label">Курс обучения *</span>
+          <select
+            class="input"
+            name="course_id"
+            required
+            [(ngModel)]="newGroup.course_id"
+          >
+            <option [ngValue]="null" disabled>Выберите курс</option>
+            <option *ngFor="let c of courses" [ngValue]="c.id">
+              {{ c.name }}
+            </option>
+          </select>
+        </label>
+
+        <!-- Дата начала -->
+        <label class="field">
+          <span class="label">Дата начала *</span>
+          <input
+            type="date"
+            class="input"
+            name="start_date"
+            required
+            [(ngModel)]="newGroup.start_date"
+          />
+        </label>
+
+        <!-- Дата конца -->
+        <label class="field">
+          <span class="label">Дата конца</span>
+          <input
+            type="date"
+            class="input"
+            name="end_date"
+            [(ngModel)]="newGroup.end_date"
+          />
+        </label>
+      </div>
+
+      <div class="form-actions">
+        <button
+          class="btn primary"
+          type="submit"
+          [disabled]="createForm.invalid"
+        >
+          Сохранить
+        </button>
+
+        <button
+          class="btn"
+          type="button"
+          (click)="onCancelCreate()"
+        >
+          Отмена
+        </button>
+      </div>
+    </form>
+
+    <!-- Таблица групп -->
+    <div class="table table-groups">
+      <div class="tr head">
+        <div>Группа</div>
+        <div>Курс</div>
+        <div>Организация</div>
+        <div>Дата начала</div>
+        <div>Дата конца</div>
+        <div></div>
+      </div>
+
+      <div class="tr" *ngFor="let g of groups">
+        <!-- предполагаю, что теперь в GroupWithDetails есть поле number -->
+        <div class="g-id">{{ g.id }}</div>
+        <div class="g-course">{{ g.course_name }}</div>
+        <div class="g-org">{{ g.course_id }} - course id</div>
+        <div class="g-date">
+          {{ g.start_date | date: 'dd.MM.yyyy' }}
+        </div>
+        <div class="g-date">
+          {{ g.end_date | date: 'dd.MM.yyyy' }}
+        </div>
+        <div class="actions">
+          <button
+            class="icon-btn"
+            title="Редактировать"
+            (click)="editGroup(g.id)"
+          >
+            <svg viewBox="0 0 24 24">
+              <use href="#pencil"></use>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

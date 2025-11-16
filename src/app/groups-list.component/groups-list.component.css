@@ -1,0 +1,396 @@
+@import url('https://fonts.googleapis.com/css2?family=ABeeZee:ital@0;1&display=swap');
+
+:host {
+  --bg: #F6FAFF;
+  /* светло-голубой фон страницы (чётко отличается от панели) */
+  --header: #e0e0ec;
+  /* голубая полоса вкладок, контрастна чипам и панели */
+  --panel: #FFFFFF;
+  /* белая карточка */
+  --text: #1E2233;
+  /* тёмный текст для хорошей читабельности */
+  --muted: #5F6B88;
+  /* подписи/шапки столбцов (чуть темнее и холоднее) */
+  --stroke: #CBD6FF;
+  /* контрастнее прежнего, холодный бордер */
+  --primary: #4F46E5;
+  /* насыщенный индиго для кнопок/акцентов */
+  --primary-press: #3E34CC;
+  /* нажатое состояние — темнее основного */
+  --chip: #E9E0FF;
+  /* лиловый фон активной вкладки — отличим от голубого header */
+  --shadow: 0 6px 20px rgba(79, 70, 229, .12);
+  /* тень в тон primary */
+
+  /* размеры табов по умолчанию (ПК) */
+  --tab-width: 172px;
+  --tab-height: 40px;
+
+  color: var(--text);
+  font-family: "ABeeZEE", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  display: block;
+}
+
+/* фон страниц */
+.employees-page,
+.courses-page,
+.groups-page {
+  min-height: 100dvh;
+  background: var(--bg);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* верхняя полоса с вкладками */
+.tabs-wrap {
+  background: var(--header);
+  border-radius: 12px;
+  padding: 12px 20px;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tabs {
+  display: flex;
+  gap: 56px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* табы */
+.tab {
+  width: var(--tab-width);
+  min-width: var(--tab-width);
+  max-width: var(--tab-width);
+  height: var(--tab-height);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  padding: 0 14px;
+  border-radius: 18px;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+
+  background: transparent;
+  border: 0;
+  color: #3b2f63;
+
+  transition: background-color .15s ease, box-shadow .15s ease;
+}
+
+.tab:hover {
+  background: #cbb9de;
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, .7);
+}
+
+.tab.active {
+  background: var(--chip);
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, .7);
+}
+
+.tab.active:hover {
+  background: #e6d9f1;
+}
+
+.tab-ico {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  box-shadow: inset 0 0 0 2px #d9c9f4;
+}
+
+.tab-ico svg {
+  width: 14px;
+  height: 14px;
+  color: #6c58c4;
+}
+
+/* карточка */
+.card {
+  background: var(--panel);
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+  padding: 24px 28px 28px;
+  margin-top: 20px;
+
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* шапка карточки */
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.card-head h1 {
+  margin: 0;
+  font-size: 38px;
+  font-weight: 700;
+  margin-left: 12px;
+}
+
+/* подзаголовок */
+.card-head-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.card-subtitle {
+  margin: 0;
+  padding-top: 16px;
+  margin-left: 16px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* кнопки */
+.btn {
+  appearance: none;
+  border: 0;
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.btn.primary {
+  color: #fff;
+  background: var(--primary);
+  box-shadow: 0 6px 14px rgba(111, 81, 213, .35);
+  transition: background-color .15s ease, transform .02s ease;
+}
+
+.btn.primary:hover {
+  background: #7a5ce0;
+}
+
+.btn.primary:active {
+  background: var(--primary-press);
+  transform: translateY(1px);
+}
+
+.card-head .btn.primary {
+  font-size: 16px;
+  padding: 12px 22px;
+  border-radius: 14px;
+  min-height: 44px;
+}
+
+/* тулбар */
+.toolbar {
+  margin: 8px 0 18px;
+}
+
+/* поиск */
+.search {
+  position: relative;
+  width: 320px;
+  max-width: 100%;
+  display: block;
+}
+
+/* для групп – чуть шире, как на макете */
+.search--wide {
+  width: 420px;
+}
+
+.search input {
+  width: 100%;
+  height: 42px;
+  border-radius: 21px;
+  border: none;
+  outline: none;
+  background: #e9e1ef;
+  padding: 0 56px 0 18px;
+  color: var(--text);
+  font-family: inherit;
+}
+
+.search input::placeholder {
+  color: #887fa2;
+}
+
+.s-ico {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  translate: 0 -50%;
+  width: 22px;
+  height: 22px;
+  color: #6e64a0;
+  pointer-events: none;
+}
+
+.s-ico svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------- ФОРМА СОЗДАНИЯ ГРУППЫ (как у курсов) ---------- */
+
+.course-form {
+  margin-bottom: 20px;
+  max-width: 760px;
+  padding-inline: 8px 32px;
+}
+
+.form-grid--groups {
+  display: grid;
+  /* четыре поля в одну строку, как плотная сетка */
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: 24px;
+  row-gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.input {
+  height: 38px;
+  border-radius: 12px;
+  border: 1px solid var(--stroke);
+  padding: 0 14px;
+  background: #f7f8ff;
+  color: var(--text);
+  font: inherit;
+  outline: none;
+}
+
+.input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.15);
+}
+
+.form-actions {
+  margin-top: 14px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+/* ---------- ТАБЛИЦА ГРУПП ---------- */
+
+.table {
+  margin-top: 12px;
+  padding-inline: 12px;
+  width: min(100%, 980px);
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+}
+
+.tr {
+  display: grid;
+  grid-template-columns: 1.3fr 0.8fr 0.5fr;
+  column-gap: 36px;
+  row-gap: 8px;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.tr:last-child {
+  border-bottom: 0;
+}
+
+.tr.head {
+  color: var(--muted);
+  font-weight: 600;
+  border-bottom: none;
+  margin-bottom: 6px;
+}
+
+/* таблица групп */
+.table-groups .tr {
+  grid-template-columns: 0.7fr 1.6fr 1.2fr 0.8fr 0.8fr 0.3fr;
+  column-gap: 40px;
+}
+
+/* выравниваем даты по правому краю */
+.table-groups .tr.head > div:nth-child(4),
+.table-groups .tr.head > div:nth-child(5),
+.table-groups .g-date {
+  text-align: right;
+}
+
+/* столбцы */
+.g-id {
+  font-weight: 600;
+}
+
+/* действия */
+.actions {
+  display: flex;
+  gap: 14px;
+  margin-left: auto;
+}
+
+.icon-btn {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  background: #fff;
+  border-radius: 50%;
+  border: 1px solid var(--stroke);
+  transition: background-color .15s ease;
+}
+
+.icon-btn:hover {
+  background: #f7f2fc;
+}
+
+.icon-btn svg {
+  width: 20px;
+  height: 20px;
+  color: #6c58c4;
+}
+
+/* ---------- АДАПТИВ ДЛЯ ФОРМЫ (как у курсов) ---------- */
+
+@media (max-width: 1100px) {
+  .form-grid--groups {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .course-form {
+    padding-inline: 8px 24px;
+  }
+}
+
+@media (max-width: 800px) {
+  .form-grid--groups {
+    grid-template-columns: 1fr;
+  }
+
+  .course-form {
+    padding-inline: 8px 16px;
+  }
+}

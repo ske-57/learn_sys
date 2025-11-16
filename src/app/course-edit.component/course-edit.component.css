@@ -1,0 +1,479 @@
+@import url('https://fonts.googleapis.com/css2?family=ABeeZee:ital@0;1&display=swap');
+
+:host {
+  --bg: #F6FAFF;
+  /* светло-голубой фон страницы (чётко отличается от панели) */
+  --header: #e0e0ec;
+  /* голубая полоса вкладок, контрастна чипам и панели */
+  --panel: #FFFFFF;
+  /* белая карточка */
+  --text: #1E2233;
+  /* тёмный текст для хорошей читабельности */
+  --muted: #5F6B88;
+  /* подписи/шапки столбцов (чуть темнее и холоднее) */
+  --stroke: #CBD6FF;
+  /* контрастнее прежнего, холодный бордер */
+  --primary: #4F46E5;
+  /* насыщенный индиго для кнопок/акцентов */
+  --primary-press: #3E34CC;
+  /* нажатое состояние — темнее основного */
+  --chip: #E9E0FF;
+  /* лиловый фон активной вкладки — отличим от голубого header */
+  --shadow: 0 6px 20px rgba(79, 70, 229, .12);
+  /* тень в тон primary */
+
+  /* размеры табов по умолчанию (ПК) */
+  --tab-width: 172px;
+  --tab-height: 40px;
+
+  color: var(--text);
+  font-family: "ABeeZee", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  display: block;
+}
+
+/* фон страниц */
+.employees-page,
+.courses-page {
+  min-height: 100dvh;
+  background: var(--bg);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* верхняя полоса с вкладками — ЧУТЬ НИЖЕ, ЦЕНТР */
+.tabs-wrap {
+  background: var(--header);
+  border-radius: 12px;
+  padding: 12px 20px;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tabs {
+  display: flex;
+  gap: 56px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ТАБЫ */
+.tab {
+  width: var(--tab-width);
+  min-width: var(--tab-width);
+  max-width: var(--tab-width);
+  height: var(--tab-height);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  padding: 0 14px;
+  border-radius: 18px;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+
+  background: transparent;
+  border: 0;
+  color: #3b2f63;
+
+  transition: background-color .15s ease, box-shadow .15s ease;
+}
+
+.tab:hover {
+  background: #cbb9de;
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, .7);
+}
+
+.tab.active {
+  background: var(--chip);
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, .7);
+}
+
+.tab.active:hover {
+  background: #e6d9f1;
+}
+
+.tab-ico {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  box-shadow: inset 0 0 0 2px #d9c9f4;
+}
+
+.tab-ico svg {
+  width: 14px;
+  height: 14px;
+  color: #6c58c4;
+}
+
+/* карточка — занимает остаток экрана, список тянется */
+.card {
+  background: var(--panel);
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+  padding: 24px 28px 28px;
+  margin-top: 20px;
+
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* шапка карточки */
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.card-head h1 {
+  margin: 0;
+  font-size: 38px;
+  font-weight: 700;
+  margin-left: 12px;
+}
+
+/* подзаголовок и группа действий в шапке */
+.card-head-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.card-subtitle {
+  margin: 0;
+  padding-top: 16px;
+  margin-left: 16px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.card-head-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* кнопки */
+.btn {
+  appearance: none;
+  border: 0;
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn.primary {
+  color: #fff;
+  background: var(--primary);
+  box-shadow: 0 6px 14px rgba(111, 81, 213, .35);
+  transition: background-color .15s ease, transform .02s ease;
+}
+
+.btn.primary:hover {
+  background: #7a5ce0;
+}
+
+.btn.primary:active {
+  background: var(--primary-press);
+  transform: translateY(1px);
+}
+
+/* только в шапке делаем основную кнопку ещё больше */
+.card-head .btn.primary {
+  font-size: 16px;
+  padding: 12px 22px;
+  border-radius: 14px;
+  min-height: 44px;
+}
+
+/* вторичная («призрачная») кнопка */
+.btn.ghost {
+  background: transparent;
+  border: 1px solid var(--stroke);
+  color: var(--primary);
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: 12px;
+}
+
+.btn.ghost:hover {
+  background: #eef0ff;
+}
+
+/* тулбар */
+.toolbar {
+  margin: 8px 0 18px;
+}
+
+/* мод для курсов (если понадобится фильтры + поиск) */
+.toolbar--courses {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 8px 0 18px;
+}
+
+/* поиск */
+.search {
+  position: relative;
+  width: 320px;
+  max-width: 100%;
+  display: block;
+}
+
+.search input {
+  width: 100%;
+  height: 38px;
+  border-radius: 19px;
+  border: none;
+  outline: none;
+  background: #e9e1ef;
+  padding: 0 56px 0 16px;
+  color: var(--text);
+}
+
+.search input::placeholder {
+  color: #887fa2;
+}
+
+.s-ico {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  translate: 0 -50%;
+  width: 22px;
+  height: 22px;
+  color: #6e64a0;
+  pointer-events: none;
+}
+
+.s-ico svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* поиск на странице курсов чуть шире по умолчанию */
+.search--courses {
+  max-width: 360px;
+}
+
+/* фильтры в виде полей (если нужны) */
+.filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 160px;
+}
+
+.field-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.field select {
+  height: 32px;
+  border-radius: 16px;
+  border: 1px solid var(--stroke);
+  padding: 0 12px;
+  background: #f5f4ff;
+  color: var(--text);
+  font-size: 14px;
+  outline: none;
+}
+
+/* таблица общая */
+.table {
+  margin-top: 12px;
+  padding-inline: 12px;
+  width: min(100%, 920px);
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+}
+
+/* Add lesson block */
+.add-lesson {
+  /* reduce vertical spacing so button sits closer to the table */
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.add-lesson-form {
+  display: grid;
+  grid-template-columns: 1fr 160px auto;
+  gap: 12px;
+  align-items: end;
+  margin-top: 6px;
+  width: min(100%, 920px);
+}
+
+.field-label { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+.field-input {
+  height: 40px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--stroke);
+  background: #fff;
+  outline: none;
+}
+
+/* smaller add-lesson trigger button */
+.add-lesson > .btn.primary {
+  margin-left: 30%;
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 10px;
+  max-width: 200px;
+  align-self: flex;
+}
+
+.form-actions-lesson {
+  display: flex;
+  gap: 12px;
+}
+
+/* actions for whole course (save/cancel all) */
+.course-actions {
+  margin-top: 18px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex;
+  width: min(100%, 920px);
+}
+
+.tr {
+  display: grid;
+  grid-template-columns: 1.3fr 0.8fr 0.5fr;
+  column-gap: 36px; /* увеличенный горизонтальный зазор */
+  row-gap: 8px;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.tr:last-child {
+  border-bottom: 0;
+}
+
+.tr.head {
+  color: var(--muted);
+  font-weight: 600;
+  border-bottom: none;
+  margin-bottom: 6px;
+}
+
+/* таблица курсов/уроков: под текущую структуру (название, часы, действия) */
+.table-courses .tr {
+  grid-template-columns: 2fr 0.5fr 0.7fr; /* название, часы, действия */
+  column-gap: 40px;
+}
+
+/* выравниваем колонку "Часы" и значения по центру */
+.table-courses .tr.head > div:nth-child(2),
+.table-courses .tr .c-hours {
+  text-align: center;
+}
+
+/* контент в таблице курсов */
+.c-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.c-name {
+  font-weight: 600;
+}
+
+.c-code {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.c-dates,
+.c-hours,
+.c-students {
+  font-size: 14px;
+}
+
+.c-status {
+  display: flex;
+  align-items: center;
+}
+
+/* статус-пилюли (если понадобятся) */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #e4e7ff;
+  color: #3730a3;
+}
+
+.status-pill--draft {
+  background: #f4f4fb;
+  color: #6b7280;
+}
+
+.status-pill--active {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.status-pill--finished {
+  background: #e0f2fe;
+  color: #1d4ed8;
+}
+
+/* действия */
+.actions {
+  display: flex;
+  gap: 14px;
+  margin-left: auto;
+}
+
+.icon-btn {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  background: #fff;
+  border-radius: 50%;
+  border: 1px solid var(--stroke);
+  transition: background-color .15s ease;
+}
+
+.icon-btn:hover {
+  background: #f7f2fc;
+}
+
+.icon-btn svg {
+  width: 20px;
+  height: 20px;
+  color: #6c58c4;
+}

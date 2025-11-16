@@ -1,0 +1,142 @@
+<!-- ГРУППЫ / РЕДАКТИРОВАНИЕ -->
+<div class="groups-page">
+  <!-- Верхняя полоса с вкладками -->
+  <div class="tabs-wrap">
+    <nav class="tabs">
+      <button class="tab" (click)="navigateToEmployees()">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Сотрудники
+      </button>
+
+      <button class="tab" (click)="navigateToCourses()">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Курсы
+      </button>
+
+      <button class="tab active" (click)="navigateToGroups()">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Группы
+      </button>
+
+      <button class="tab">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Отчеты
+      </button>
+    </nav>
+  </div>
+
+  <!-- Белая панель -->
+  <section class="card">
+    <header class="card-head">
+      <div class="card-head-main">
+        <h1>Состав группы # {{ groupId }}</h1>
+        <!-- <p class="card-subtitle">Добавление и удаление сотрудников</p> -->
+      </div>
+    </header>
+
+    <!-- Таблица сотрудников в группе -->
+    <div class="table table-members">
+      <div class="tr head">
+        <div>ФИО сотрудника</div>
+        <div>Организация</div>
+        <div>Действия</div>
+      </div>
+
+      <div class="tr" *ngFor="let m of group_members">
+        <div class="m-fio">
+          {{ m.last_name }} {{ m.name }} {{ m.middle_name }}
+        </div>
+        <div class="m-org">
+          {{ m.organization_name }}
+        </div>
+        <div class="actions">
+          <button
+            class="icon-btn"
+            title="Удалить из группы"
+            type="button"
+            (click)="removeMember(m.id)"
+          >
+            <svg viewBox="0 0 24 24">
+              <use href="#trash"></use>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Блок добавления сотрудника -->
+    <div class="add-member">
+      <button class="btn primary" type="button" (click)="toggleAddMember()">
+        Добавить сотрудника
+      </button>
+
+      <div class="add-member-form" *ngIf="showAddMember">
+        <div class="field">
+          <label class="field-label">Сотрудник *</label>
+          <select
+            name="employee"
+            class="field-input"
+            [(ngModel)]="newMember.id"
+          >
+            <option [ngValue]="null" disabled>Выберите сотрудника</option>
+            <option *ngFor="let e of employees" [ngValue]="e.id">
+              {{ e.last_name }} {{ e.name }} {{ e.middle_name }} ( {{ e.organization_name }} )
+            </option>
+            <option></option>
+          </select>
+        </div>
+
+        <div class="form-actions-member">
+          <button
+            class="btn primary"
+            type="button"
+            (click)="saveMember()"
+          >
+            Добавить
+          </button>
+          <button   
+            class="btn ghost"
+            type="button"
+            (click)="cancelAdd()"
+          >
+            Отмена
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Действия для всей группы -->
+    <div class="group-actions">
+      <button
+        class="btn primary"
+        type="button"
+        (click)="saveAll()"
+      >
+        Сохранить изменения
+      </button>
+      <button
+        class="btn ghost"
+        type="button"
+        (click)="navigateToGroups()"
+      >
+        Вернуться назад
+      </button>
+    </div>
+  </section>
+</div>
