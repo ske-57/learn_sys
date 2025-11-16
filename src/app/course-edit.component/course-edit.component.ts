@@ -54,10 +54,9 @@ export class CourseEditComponent implements OnInit, OnDestroy{
           this.course = data;
           this.lessons = data.lessons || [];
           this.courseId = course_id;
-          console.log(data);
         },
         error: (error) => {
-          console.error(console.error());
+          console.error(error);
         }
       })
     }

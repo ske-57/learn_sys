@@ -31,7 +31,7 @@ export class CoursesListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-      console.log(this.courses);
+      console.log('Leaved Courses List Component');
     }
 
   private loadCoursesMock(): void {
@@ -46,10 +46,9 @@ export class CoursesListComponent implements OnInit, OnDestroy {
     this.coursesSerivce.getCourses().subscribe({
       next: (data) => {
         this.courses = data;
-        console.log(data);
       },
       error: (error) => {
-        console.error(console.error());
+        console.error(error);
       }
     })
   }
@@ -87,7 +86,6 @@ export class CoursesListComponent implements OnInit, OnDestroy {
     });
     
     this.isCreating = false;
-    console.log('Создан новый курс', this.newCourse);
   }
 
   private clearCourse(): CourseCreateDTO {

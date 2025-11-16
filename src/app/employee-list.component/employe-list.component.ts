@@ -79,7 +79,6 @@ export class EmployeListComponent implements OnInit, OnDestroy {
     this.employeService.getEmployees().subscribe({
       next: (data) => {
         this.employees = data;
-        console.log(data);
       },
       error: (error) => {
         console.error(error);

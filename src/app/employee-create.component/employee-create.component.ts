@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
-import { Employee } from '../types/Employee/Employee-type';
 import { Router } from '@angular/router';
 import { EmployeeCreateDTO } from '../types/Employee/Employee-createDTO';
 import { EmployeesService } from '../services/employees/employees.service';
@@ -29,11 +28,9 @@ export class EmployeeCreateComponent {
   onSubmit(form: NgForm): void {
     if (form.invalid) return;
 
-    console.log('Форма отправлена', this.employee);
     // здесь делаешь запрос на backend и т.п.
     this.employeeService.createEmployee(this.employee).subscribe({
       next: (data) => {
-        console.log('Сотрудник создан', data);
         this.navigateToEmployees();
       },
       error: (error) => {

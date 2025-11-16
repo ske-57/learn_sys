@@ -70,10 +70,8 @@ export class GroupsEditComponent implements OnInit {
 
   saveMember(): void {
     // Logic to save new member to group
-    console.log(`Adding member with ID: ${this.newMember.id} to group ID: ${this.groupId}`);
     this.groupsService.addEmployeeToGroup(this.groupId, this.newMember.id!).subscribe({
       next: (data) => {
-        console.log('Member added to group', data);
         // Optionally refresh the member list
         this.groupsService.getGroupMembers(this.groupId).subscribe({
           next: (members) => {
@@ -97,7 +95,6 @@ export class GroupsEditComponent implements OnInit {
 
   saveAll(): void {
     // Logic to save all changes
-    console.log('Saving all changes to group members');
     this.navigateToGroups();
   }
 
