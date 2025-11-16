@@ -1,4 +1,4 @@
-const db = require('../db.origin');
+const db = require('../db');
 
 class GroupsController {
 
