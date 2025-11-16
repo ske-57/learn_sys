@@ -94,6 +94,7 @@
       <section class="reports-params">
         <h2 class="section-title section-title--right">Параметры</h2>
 
+        <!-- Группа: ВЫБОР -->
         <div class="param-field">
           <div class="param-header">
             <span class="param-label">Группа *</span>
@@ -105,14 +106,18 @@
               ✕
             </button>
           </div>
-          <input
-            class="param-input"
-            type="text"
-            placeholder="Введите группу"
+          <select
+            class="param-control"
             [(ngModel)]="params.group"
-          />
+          >
+            <option [ngValue]="null" disabled>Выберите группу</option>
+            <option *ngFor="let g of groups" [ngValue]="g.id">
+              {{ g.id }} — {{ g.course_name }}
+            </option>
+          </select>
         </div>
 
+        <!-- Обучающая организация: ВЫБОР -->
         <div class="param-field">
           <div class="param-header">
             <span class="param-label">Обучающая организация *</span>
@@ -124,14 +129,18 @@
               ✕
             </button>
           </div>
-          <input
-            class="param-input"
-            type="text"
-            placeholder="Введите организацию"
+          <select
+            class="param-control"
             [(ngModel)]="params.trainingOrg"
-          />
+          >
+            <option [ngValue]="null" disabled>Выберите организацию</option>
+            <option *ngFor="let org of organizations" [ngValue]="org.id">
+              {{ org.name }}
+            </option>
+          </select>
         </div>
 
+        <!-- Обучаемая организация: ВЫБОР -->
         <div class="param-field">
           <div class="param-header">
             <span class="param-label">Обучаемая организация</span>
@@ -143,12 +152,15 @@
               ✕
             </button>
           </div>
-          <input
-            class="param-input"
-            type="text"
-            placeholder="Введите организацию"
+          <select
+            class="param-control"
             [(ngModel)]="params.customerOrg"
-          />
+          >
+            <option [ngValue]="null" disabled>Выберите организацию</option>
+            <option *ngFor="let org of organizations" [ngValue]="org.id">
+              {{ org.name }}
+            </option>
+          </select>
         </div>
       </section>
     </div>
