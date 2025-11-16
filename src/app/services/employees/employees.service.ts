@@ -4,6 +4,7 @@ import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
 import { Employee } from '../../types/Employee/Employee-type';
 import { EmployeeCreateDTO } from '../../types/Employee/Employee-createDTO';
+import { EmployeeSimpleDTO } from '../../types/Employee/Employee-simpleDTO';
 
 export type EmployeeWithOrg = Employee & { organization_name: string};
 
@@ -19,6 +20,10 @@ export class EmployeesService {
 
   getEmployees(): Observable<EmployeeWithOrg[]> {
     return this.http.get<EmployeeWithOrg[]>(`${this.baseApi}/employees`);
+  }
+
+  getSimpleEmployees(): Observable<EmployeeSimpleDTO[]> {
+    return this.http.get<EmployeeSimpleDTO[]>(`${this.baseApi}/employees/simple`);
   }
 
   createEmployee(body: EmployeeCreateDTO): Observable<EmployeeCreateDTO> {

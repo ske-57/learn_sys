@@ -5,6 +5,8 @@ const employeeController = require('../controller/employee.controller')
 router.post('/employees', employeeController.createEmployee)
 
 router.get('/employees', employeeController.getEmployees)
+
+router.get('/employees/simple', employeeController.getSimpleEmployees)
 // Soft delete employee by id
 router.post('/employees/:id', employeeController.softDeleteEmploye)
 

@@ -81,6 +81,22 @@ class EmployeController {
         }
     }
 
+    async getSimpleEmployees(req, res) {
+        try {
+            const result = await db.query(`
+                SELECT e.id, e.name, e.last_name, e.middle_name, o.name AS organization_name
+                FROM employees e
+                LEFT JOIN organizations o ON o.id = e.organization_id
+                WHERE e.is_active = true
+                ORDER BY e.id
+            `)
+            return res.json(result.rows)
+        } catch (err) {
+            console.error('getSimpleEmployees error', err)
+            return res.status(500).json({ error: 'Internal server error' })
+        }
+    }
+
     // Get single employee by id
     async getEmployeById(req, res) {
         try {
