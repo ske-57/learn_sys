@@ -110,4 +110,8 @@ export class GroupsEditComponent implements OnInit {
   navigateToGroups(): void {
     this.router.navigate(['/groups']);
   }
+
+  navigateToDocs(): void {
+    this.router.navigate(['/docs']);
+  }
 }

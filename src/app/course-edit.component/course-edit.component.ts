@@ -107,5 +107,9 @@ export class CourseEditComponent implements OnInit, OnDestroy{
 
   navigateToGroups(): void {
     this.router.navigate(['/groups']);
-  } 
+  }
+
+  navigateToDocs(): void {
+    this.router.navigate(['/docs']);
+  }
 }

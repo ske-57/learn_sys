@@ -1,0 +1,156 @@
+<!-- ОТЧЕТЫ -->
+<div class="reports-page">
+  <!-- Верхняя полоса с вкладками -->
+  <div class="tabs-wrap">
+    <nav class="tabs">
+      <button class="tab" (click)="navigateToEmployees()">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Сотрудники
+      </button>
+
+      <button class="tab" (click)="navigateToCourses()">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Курсы
+      </button>
+
+      <button class="tab" (click)="navigateToGroups()">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Группы
+      </button>
+
+      <button class="tab active">
+        <span class="tab-ico">
+          <svg viewBox="0 0 24 24">
+            <use href="#plus-circle"></use>
+          </svg>
+        </span>
+        Отчеты
+      </button>
+    </nav>
+  </div>
+
+  <!-- Белая панель -->
+  <section class="card">
+    <header class="card-head">
+      <div class="card-head-main">
+        <h1>Генерация отчетов</h1>
+      </div>
+    </header>
+
+    <div class="reports-layout">
+      <!-- ЛЕВАЯ КОЛОНКА: тип отчёта -->
+      <section class="reports-types">
+        <h2 class="section-title">Тип отчета</h2>
+
+        <div class="reports-types-box">
+          <div class="report-row">
+            <div class="report-name">Приказ на зачисление</div>
+            <button
+              class="btn primary btn-generate"
+              type="button"
+              (click)="generateEntollmentProtocol()"
+            >
+              Сгенерировать
+            </button>
+          </div>
+
+          <div class="report-row">
+            <div class="report-name">Журнал учета посещаемости</div>
+            <button
+              class="btn primary btn-generate"
+              type="button"
+              (click)="generateVisitProtocol()"
+            >
+              Сгенерировать
+            </button>
+          </div>
+
+          <div class="report-row">
+            <div class="report-name">Протокол прохождения курса</div>
+            <button
+              class="btn primary btn-generate"
+              type="button"
+              (click)="generateCourseProtocol()"
+            >
+              Сгенерировать
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ПРАВАЯ КОЛОНКА: параметры -->
+      <section class="reports-params">
+        <h2 class="section-title section-title--right">Параметры</h2>
+
+        <div class="param-field">
+          <div class="param-header">
+            <span class="param-label">Группа *</span>
+            <button
+              class="param-clear"
+              type="button"
+              (click)="clearGroup()"
+            >
+              ✕
+            </button>
+          </div>
+          <input
+            class="param-input"
+            type="text"
+            placeholder="Введите группу"
+            [(ngModel)]="params.group"
+          />
+        </div>
+
+        <div class="param-field">
+          <div class="param-header">
+            <span class="param-label">Обучающая организация *</span>
+            <button
+              class="param-clear"
+              type="button"
+              (click)="clearTrainingOrg()"
+            >
+              ✕
+            </button>
+          </div>
+          <input
+            class="param-input"
+            type="text"
+            placeholder="Введите организацию"
+            [(ngModel)]="params.trainingOrg"
+          />
+        </div>
+
+        <div class="param-field">
+          <div class="param-header">
+            <span class="param-label">Обучаемая организация</span>
+            <button
+              class="param-clear"
+              type="button"
+              (click)="clearCustomerOrg()"
+            >
+              ✕
+            </button>
+          </div>
+          <input
+            class="param-input"
+            type="text"
+            placeholder="Введите организацию"
+            [(ngModel)]="params.customerOrg"
+          />
+        </div>
+      </section>
+    </div>
+  </section>
+</div>

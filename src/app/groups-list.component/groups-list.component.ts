@@ -122,4 +122,7 @@ export class GroupsListComponent implements OnInit {
     this.router.navigate(['/groups']);
   }
 
+  navigateToDocs(): void {
+    this.router.navigate(['/docs']);
+  }
 }

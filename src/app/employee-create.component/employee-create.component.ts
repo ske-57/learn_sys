@@ -65,4 +65,8 @@ export class EmployeeCreateComponent {
   navigateToGroups(): void {
     this.router.navigate(['/groups']);
   } 
+
+  navigateToDocs(): void {
+    this.router.navigate(['/docs']);
+  }
 }

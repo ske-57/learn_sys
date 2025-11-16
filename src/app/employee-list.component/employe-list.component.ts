@@ -100,4 +100,7 @@ export class EmployeListComponent implements OnInit, OnDestroy {
     this.router.navigate(['/groups']);
   }
 
+  navigateToDocs(): void {
+    this.router.navigate(['/docs']);
+  }
 }

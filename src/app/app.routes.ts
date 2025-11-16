@@ -5,6 +5,7 @@ import { CoursesListComponent } from './courses-list.component/courses-list.comp
 import { CourseEditComponent } from './course-edit.component/course-edit.component';
 import { GroupsListComponent } from './groups-list.component/groups-list.component';
 import { GroupsEditComponent } from './groups-edit.component/groups-edit.component';
+import { DocsGenerationComponent } from './docs-generation.component/docs-generation.component';
 
 export const routes: Routes = [
     { path: '', component: EmployeListComponent, pathMatch: 'full' },
@@ -13,5 +14,6 @@ export const routes: Routes = [
     { path: 'courses/:id/edit', component: CourseEditComponent},
     { path: 'groups', component: GroupsListComponent},
     { path: 'groups/:id/edit', component: GroupsEditComponent},
+    { path: 'docs', component: DocsGenerationComponent},
     { path: '**', redirectTo: '' }
 ];
