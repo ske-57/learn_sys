@@ -31,4 +31,8 @@ export class GroupsService {
   addEmployeeToGroup(group_id: number, employee_id: number): Observable<void> {
     return this.http.post<void>(`${this.baseApi}/groups/${group_id}/members`, { employee_id });
   }
+
+  getGroupInfo(group_id: number): Observable<Group> {
+    return this.http.get<Group>(`${this.baseApi}/groups/${group_id}`);
+  }
 }

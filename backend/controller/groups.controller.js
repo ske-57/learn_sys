@@ -125,6 +125,25 @@ class GroupsController {
             return res.status(500).json({ error: 'Internal server error' });
         }
     }
+
+    async getGroupById(req, res) {
+        
+        const { groupId } = req.params;
+
+        try {
+
+        const groups = await db.query(
+            `SELECT * FROM groups g WHERE g.id = $1`,
+            [
+                groupId
+            ]
+        )
+        return res.status(200).json( groups.rows[0] )
+    } catch (err) {
+        console.error('get group by ID error', err);
+        return res.status(500).json({ error: 'Internal server error '})
+    }
+    }
 }
 
 module.exports = new GroupsController();

@@ -7,6 +7,8 @@ router.post('/groups', groupsController.CreateGroup);
 
 router.get('/groups', groupsController.GetGroups);
 
+router.get('/groups/:groupId', groupsController.getGroupById)
+
 router.post('/groups/:groupId/members', groupsController.addGroupMember);
 
 router.get('/groups/:id/members', groupsController.getGroupMembersById);
