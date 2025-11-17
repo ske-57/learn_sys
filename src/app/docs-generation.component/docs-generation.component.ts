@@ -47,30 +47,54 @@ export class DocsGenerationComponent implements OnInit {
   }
 
   generateEntollmentProtocol(): void {
+    if (!this.params.group) {
+      console.error('Group parameter is required to generate course report');
+      return;
+    }
+    if (!this.params.trainingOrg) {
+      console.error('Training Organization parameter is required to generate course report');
+      return;
+    }
     // Логика генерации отчета
     console.log('Generating entollmentreport with params:', this.params);
   }
 
   generateVisitProtocol(): void {
+    if (!this.params.group) {
+      console.error('Group parameter is required to generate course report');
+      return;
+    }
+    if (!this.params.trainingOrg) {
+      console.error('Training Organization parameter is required to generate course report');
+      return;
+    }
     // Логика генерации отчета
     console.log('Generating visit report with params:', this.params);
   }
   
   generateCourseProtocol(): void {
+    if (!this.params.group) {
+      console.error('Group parameter is required to generate course report');
+      return;
+    }
+    if (!this.params.trainingOrg) {
+      console.error('Training Organization parameter is required to generate course report');
+      return;
+    }
     // Логика генерации отчета
     console.log('Generating course report with params:', this.params);
   }
 
   clearGroup(): void {
-    this.params.groupId = null;
+    this.params.group = null!;
   }
 
   clearTrainingOrg(): void {
-    this.params.trainingOrgId = null;
+    this.params.trainingOrg = null!;
   }
 
   clearCustomerOrg(): void {
-    this.params.customerOrgId = null;
+    this.params.customerOrg = null!;
   }
 
   navigateToEmployees(): void {
