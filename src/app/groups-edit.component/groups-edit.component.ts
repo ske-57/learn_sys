@@ -23,7 +23,7 @@ export class GroupsEditComponent implements OnInit {
   groupId: number = -1;
   showAddMember: boolean = false;
   group_members: GroupMember[] = [];
-  employees: EmployeeSimpleDTO[] = [];
+  employees: Employee[] = [];
   newMember: Employee = {
     id: null!,
     name: '',
@@ -49,7 +49,7 @@ export class GroupsEditComponent implements OnInit {
       }
     });
 
-    this.employeesService.getSimpleEmployees().subscribe({
+    this.employeesService.getEmployees().subscribe({
       next: (list) => {
         this.employees = list
       },
