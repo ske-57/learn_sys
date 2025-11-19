@@ -28,6 +28,11 @@ export class CoursesService {
   getCourseById(course_id: number): Observable<Course> {
     return this.http.get<Course>(`${this.baseApi}/courses/${course_id}`);
   }
+
+  // Only java endpoint
+  getCourseLessonsByCourseId(course_id: number): Observable<Lesson[]> {
+    return this.http.get<Lesson[]>(`${this.baseApi}/courses/${course_id}/lessons`);
+  }
   
   addLesson(course_id: number, body: LessonCreateDTO): Observable<LessonCreateDTO> {
     return this.http.post<LessonCreateDTO>(`${this.baseApi}/courses/${course_id}/lessons`, body );

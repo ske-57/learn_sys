@@ -14,7 +14,7 @@ import { LessonCreateDTO } from '../types/Courses/Lesson-createDTO';
   templateUrl: './course-edit.component.html',
   styleUrl: './course-edit.component.css',
 })
-export class CourseEditComponent implements OnInit, OnDestroy{
+export class CourseEditComponent implements OnInit, OnDestroy {
   private router = inject(Router)
   private coursesService = inject(CoursesService)
   private route = inject(ActivatedRoute)
@@ -25,12 +25,12 @@ export class CourseEditComponent implements OnInit, OnDestroy{
     name: '',
   }
   showAddLesson = false;
-  newLesson: LessonCreateDTO = {name: '', hours: null! };
+  newLesson: LessonCreateDTO = { name: '', hours: null! };
 
   ngOnDestroy(): void {
     // Cleanup if needed
   }
-  
+
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       const stirngId = params.get('id')
@@ -38,9 +38,13 @@ export class CourseEditComponent implements OnInit, OnDestroy{
       if (stirngId != null) id = +stirngId;
       else id = -1;
       this.loadCurrCourse(id);
+      
+      // Load Curr Course Lesson - Method For Java Backend!
+      this.loadCurrCourseLessons(id);
     })
   }
 
+  // If Node.js Back is using
   private loadCurrCourse(course_id: number): void {
     if (course_id == -1) {
       this.course = {
@@ -50,7 +54,7 @@ export class CourseEditComponent implements OnInit, OnDestroy{
     }
     else {
       this.coursesService.getCourseById(course_id).subscribe({
-        next: (data : Course) => {
+        next: (data: Course) => {
           this.course = data;
           this.lessons = data.lessons || [];
           this.courseId = course_id;
@@ -63,11 +67,27 @@ export class CourseEditComponent implements OnInit, OnDestroy{
   }
 
 
-  
+  // If Java Back is using!
+  private loadCurrCourseLessons(course_id: number): void {
+    if (course_id == -1) {
+      this.course = {
+        id: -1,
+        name: "Something went wrong :(",
+      }
+    }
+    else {
+      this.coursesService.getCourseLessonsByCourseId(course_id).subscribe({
+        next: (data) => this.lessons = data,
+        error: (error) => console.error(error)
+      })
+    }
+  }
+
+
 
   toggleAddLesson(): void {
     this.showAddLesson = !this.showAddLesson;
-    if (!this.showAddLesson) this.newLesson = { name: '', hours: null!};
+    if (!this.showAddLesson) this.newLesson = { name: '', hours: null! };
   }
 
   saveLesson(): void {
@@ -82,7 +102,7 @@ export class CourseEditComponent implements OnInit, OnDestroy{
     this.coursesService.addLesson(this.courseId, this.newLesson).subscribe({
       next: (data) => {
         this.toggleAddLesson();
-        this.loadCurrCourse(this.courseId)
+        this.loadCurrCourseLessons(this.courseId)
       },
       error: (err) => console.error('Failed to add lesson', err)
     })
@@ -96,7 +116,7 @@ export class CourseEditComponent implements OnInit, OnDestroy{
   saveAll(): void {
     this.navigateToCourses();
   }
-  
+
   navigateToEmployees(): void {
     this.router.navigate(['/']);
   }
