@@ -91,17 +91,17 @@
           />
         </label>
 
-        <!-- Часы (необязательно) -->
-        <!-- <label class="field">
-          <span class="label">Часы</span>
+        <!-- Заключение комиссии (необязательно) -->
+        <label class="field">
+          <span class="label">Заключение комиссии</span>
           <input
-            type="number"
+            type="text"
             class="input"
-            name="hours"
-            [(ngModel)]="newCourse.hours"
-            placeholder="Например, 40"
+            name="conclusion"
+            [(ngModel)]="newCourse.conclusion"
+            placeholder="Например, комиссия утвердила"
           />
-        </label> -->
+        </label>
 
         <!-- Оценка за курс (необязательно) -->
         <label class="field">
@@ -112,6 +112,18 @@
             name="mark"
             [(ngModel)]="newCourse.mark"
             placeholder="Например, «зачёт»"
+          />
+        </label>
+
+        <!-- Описание (необязательно) -->
+        <label class="field">
+          <span class="label">Описание </span>
+          <input
+            type="text"
+            class="input"
+            name="description"
+            [(ngModel)]="newCourse.description"
+            placeholder="Например, курс для сотрудников по СБ"
           />
         </label>
       </div>

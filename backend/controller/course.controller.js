@@ -5,7 +5,7 @@ class CourseController {
     // Create a new course
     async createCourse(req, res) {
         try {
-            const { name, hours, mark } = req.body
+            const { name, conclusion, mark, description } = req.body
 
             // required fields according to DB schema
             if (!name) {
@@ -14,12 +14,13 @@ class CourseController {
 
             const result = await db.query(
                 `INSERT INTO courses(
-                    name, hours, mark
-                ) VALUES($1,$2,$3) RETURNING *`,
+                    name, conclusion, mark, description
+                ) VALUES($1, $2, $3, $4) RETURNING *`,
                 [
                     name,
-                    hours || null,
-                    mark || null
+                    conclusion || null,
+                    mark || null,
+                    description || null
                 ]
             )
 
@@ -111,16 +112,16 @@ class CourseController {
 
             const inserted = result.rows[0]
 
-            const hoursNum = Number(hours)
-            if (!Number.isNaN(hoursNum) && hoursNum > 0) {
-                await db.query(
-                    `UPDATE courses SET hours = COALESCE(hours, 0) + $1 WHERE id = $2`,
-                    [
-                        hoursNum,
-                        id
-                    ]
-                )
-            }
+            // const hoursNum = Number(hours)
+            // if (!Number.isNaN(hoursNum) && hoursNum > 0) {
+            //     await db.query(
+            //         `UPDATE courses SET hours = COALESCE(hours, 0) + $1 WHERE id = $2`,
+            //         [
+            //             hoursNum,
+            //             id
+            //         ]
+            //     )
+            // }
 
             return res.status(201).json(inserted)
         } catch (err) {

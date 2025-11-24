@@ -1,5 +1,6 @@
 export type CourseCreateDTO = {
   name: string;
-  hours?: number | null;
+  conclusion?: string | null;
   mark?: string | null;
+  description?: string | null;
 }

@@ -21,8 +21,9 @@ export class CoursesListComponent implements OnInit, OnDestroy {
 
   newCourse: {
     name: string;
-    hours?: number | null;
+    conclusion?: string | null;
     mark?: string | null;
+    description?: string | null;
   } = this.clearCourse();
 
   
@@ -31,7 +32,6 @@ export class CoursesListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-      console.log('Leaved Courses List Component');
     }
 
   private loadCoursesMock(): void {
@@ -78,6 +78,7 @@ export class CoursesListComponent implements OnInit, OnDestroy {
     this.coursesSerivce.createCourse(this.newCourse).subscribe({
       next: (data) => {
         this.loadCourses();
+        console.log(this.newCourse);
         this.newCourse = this.clearCourse();
       },
       error: (error) => {
@@ -89,7 +90,7 @@ export class CoursesListComponent implements OnInit, OnDestroy {
   }
 
   private clearCourse(): CourseCreateDTO {
-    return { name: '', hours: null, mark: null };
+    return { name: '', conclusion: null, mark: null, description: null};
   }
 
   private getMaxId(): number {
