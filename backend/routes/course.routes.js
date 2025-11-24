@@ -10,4 +10,6 @@ router.get('/courses/:id', courseController.getCourseById)
 
 router.post('/courses/:id/lessons', courseController.addLessonToCourse)
 
+router.delete('/courses/:course_id/lessons/:lesson_id', courseController.deleteLessonFromCourse)
+
 module.exports = router

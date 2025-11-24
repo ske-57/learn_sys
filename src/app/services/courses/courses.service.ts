@@ -37,5 +37,9 @@ export class CoursesService {
   addLesson(course_id: number, body: LessonCreateDTO): Observable<LessonCreateDTO> {
     return this.http.post<LessonCreateDTO>(`${this.baseApi}/courses/${course_id}/lessons`, body );
   }
+
+  deleteLesson(course_id: number, lesson_id: number): Observable<any> {
+    return this.http.delete(`${this.baseApi}/courses/${course_id}/lessons/${lesson_id}`);
+  }
     
 }

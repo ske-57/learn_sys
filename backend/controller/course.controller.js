@@ -117,12 +117,51 @@ class CourseController {
                     `UPDATE courses SET hours = COALESCE(hours, 0) + $1 WHERE id = $2`,
                     [
                         hoursNum,
-                        id]
+                        id
+                    ]
                 )
             }
 
             return res.status(201).json(inserted)
         } catch (err) {
+            console.error('addLessonToCourse error', err)
+            return res.status(500).json({ error: 'Internal server error' })
+        }
+    }
+
+    async deleteLessonFromCourse(req, res) {
+        try {
+            const { course_id, lesson_id } = req.params
+
+            if (!course_id || course_id <= 0) {
+                return res.status(400).json({ error: "Course id must be more than zero"})
+            }
+            if (!lesson_id || lesson_id <= 0) {
+                return res.status(400).json({ error: "Lessont id must be more than zero"})
+            }
+
+            // Verify for existing course
+            const courseCheck = await db.query(
+                `SELECT id FROM courses WHERE id = $1`,
+                [
+                    course_id
+                ]
+            )
+
+            if (courseCheck.rows.length === 0) {
+                return res.status(404).json({ error: `Course with value ${id} not found` })
+            }
+
+            const query = await db.query(
+                `DELETE FROM course_lessons cl WHERE cl.course_id = $1 AND cl.id = $2`,
+                [
+                    course_id,
+                    lesson_id
+                ]
+            )
+
+            return res.status(200).json({ message: "Course lesson deleted succesfull"})
+        } catch {
             console.error('addLessonToCourse error', err)
             return res.status(500).json({ error: 'Internal server error' })
         }

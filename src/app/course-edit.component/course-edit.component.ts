@@ -40,7 +40,7 @@ export class CourseEditComponent implements OnInit, OnDestroy {
       this.loadCurrCourse(id);
       
       // Load Curr Course Lesson - Method For Java Backend!
-      this.loadCurrCourseLessons(id);
+      // this.loadCurrCourseLessons(id);
     })
   }
 
@@ -107,6 +107,16 @@ export class CourseEditComponent implements OnInit, OnDestroy {
       },
       error: (err) => console.error('Failed to add lesson', err)
     })
+  }
+
+  deleteLesson(lesson_id: number): void {
+    this.coursesService.deleteLesson(this.courseId, lesson_id).subscribe({
+      next: (data) => {
+        console.log(data)
+        this.loadCurrCourse(this.courseId)
+      },
+      error: (error) => console.error(error)
+    });
   }
 
   cancelAdd(): void {
