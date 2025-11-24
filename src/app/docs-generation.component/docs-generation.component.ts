@@ -128,7 +128,7 @@ export class DocsGenerationComponent implements OnInit {
 
   getAllData(): {group_id: number, course_name: string, hours: number, employee: GroupMember[]} {
     const data = {
-      group_id: this.groupInfo?.course_id || -1,
+      group_id: this.groupInfo?.id || -1,
       course_name: this.courseInfo?.name || 'Nothing',
       hours: this.courseInfo?.hours || -1,
       employee: this.groupMembers

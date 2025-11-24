@@ -102,7 +102,8 @@ export class CourseEditComponent implements OnInit, OnDestroy {
     this.coursesService.addLesson(this.courseId, this.newLesson).subscribe({
       next: (data) => {
         this.toggleAddLesson();
-        this.loadCurrCourseLessons(this.courseId)
+        this.loadCurrCourse(this.courseId);
+        // this.loadCurrCourseLessons(this.courseId)
       },
       error: (err) => console.error('Failed to add lesson', err)
     })
