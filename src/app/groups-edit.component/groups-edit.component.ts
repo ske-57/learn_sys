@@ -40,14 +40,7 @@ export class GroupsEditComponent implements OnInit {
       // Load group data by id if needed
     });
 
-    this.groupsService.getGroupMembers(this.groupId).subscribe({
-      next: (members) => {
-        this.group_members = members;
-      },
-      error: (err) => {
-        console.error('Failed to load group members', err);
-      }
-    });
+    this.getMembers();
 
     this.employeesService.getEmployees().subscribe({
       next: (list) => {
@@ -60,8 +53,15 @@ export class GroupsEditComponent implements OnInit {
   }
 
   removeMember(memberId: number): void {
-    // Logic to remove member from group
-    console.log(`Removing member with ID: ${memberId} from group ID: ${this.groupId}`);
+    this.groupsService.deleteGroupMember(this.groupId, memberId).subscribe({
+      next: (data) => {
+        console.log(data);
+        this.getMembers();
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    })
   }
 
   toggleAddMember(): void {
@@ -73,7 +73,17 @@ export class GroupsEditComponent implements OnInit {
     this.groupsService.addEmployeeToGroup(this.groupId, this.newMember.id!).subscribe({
       next: (data) => {
         // Optionally refresh the member list
-        this.groupsService.getGroupMembers(this.groupId).subscribe({
+        this.showAddMember = false;
+        this.getMembers()
+      },
+      error: (error) => {
+        console.error('Error adding member to group', error);
+      }
+    });
+  }
+
+  getMembers(): void {
+    this.groupsService.getGroupMembers(this.groupId).subscribe({
           next: (members) => {
             this.group_members = members;
           },
@@ -81,12 +91,6 @@ export class GroupsEditComponent implements OnInit {
             console.error('Failed to load group members', err);
           }
         });
-        this.showAddMember = false;
-      },
-      error: (error) => {
-        console.error('Error adding member to group', error);
-      }
-    });
   }
 
   cancelAdd(): void {

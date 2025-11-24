@@ -35,4 +35,8 @@ export class GroupsService {
   getGroupInfo(group_id: number): Observable<Group> {
     return this.http.get<Group>(`${this.baseApi}/groups/${group_id}`);
   }
+
+  deleteGroupMember(group_id: number, employee_id: number): Observable<any> {
+    return this.http.delete(`${this.baseApi}/groups/${group_id}/members/${employee_id}`);
+  }
 }

@@ -64,7 +64,7 @@ class GroupsController {
 
     async getGroupMembersById(req, res) {
         try {
-            const { id } = req.params;
+            const { groupId } = req.params;
 
             const membersResult = await db.query(
                 `SELECT e.id, e.name, e.last_name, e.middle_name, o.name as organization_name
@@ -73,7 +73,7 @@ class GroupsController {
                  JOIN organizations o ON o.id = e.organization_id
                  WHERE gm.group_id = $1`,
                 [
-                    id
+                    groupId
                 ]
             );
             return res.status(200).json(membersResult.rows);
@@ -87,7 +87,7 @@ class GroupsController {
         try {
             const { groupId } = req.params;
             const { employee_id } = req.body;
-            
+
             // Check if the group exists
             const groupResult = await db.query(
                 `SELECT * FROM groups WHERE id = $1`,
@@ -127,22 +127,57 @@ class GroupsController {
     }
 
     async getGroupById(req, res) {
-        
+
         const { groupId } = req.params;
 
         try {
 
-        const groups = await db.query(
-            `SELECT * FROM groups g WHERE g.id = $1`,
-            [
-                groupId
-            ]
-        )
-        return res.status(200).json( groups.rows[0] )
-    } catch (err) {
-        console.error('get group by ID error', err);
-        return res.status(500).json({ error: 'Internal server error '})
+            const groups = await db.query(
+                `SELECT * FROM groups g WHERE g.id = $1`,
+                [
+                    groupId
+                ]
+            )
+            return res.status(200).json(groups.rows[0])
+        } catch (err) {
+            console.error('get group by ID error', err);
+            return res.status(500).json({ error: 'Internal server error' })
+        }
     }
+
+    async deleteGroupMember(req, res) {
+        try {
+            const { groupId, employeeId } = req.params
+
+            if (!groupId || groupId <= 0) {
+                return res.status(400).json({ error: 'Group id can`t be less than one' })
+            }
+            if (!employeeId || employeeId <= 0) {
+                return res.status(400).json({ error: 'Employee id can`t be less than one' })
+            }
+
+            const employeeResult = await db.query(
+                `SELECT e.id FROM employees e WHERE e.id = $1`,
+                [
+                    employeeId
+                ]
+            )
+            if (employeeResult.rows.length === 0) {
+                return res.status(404).json({ error: `Employee with ${employeeId} not found`})
+            }
+
+            const result = await db.query(
+                `DELETE FROM group_members gm WHERE gm.group_id = $1 AND gm.employee_id = $2`,
+                [
+                    groupId,
+                    employeeId
+                ]
+            )
+            return res.status(200).json({ message: `Group member with id ${employeeId} deleted succesfull`})
+        } catch (err) {
+            console.error(err)
+            return res.status(500).json({ error: 'Internal server error'})
+        }
     }
 }
 

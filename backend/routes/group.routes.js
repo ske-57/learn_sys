@@ -11,7 +11,9 @@ router.get('/groups/:groupId', groupsController.getGroupById)
 
 router.post('/groups/:groupId/members', groupsController.addGroupMember);
 
-router.get('/groups/:id/members', groupsController.getGroupMembersById);
+router.get('/groups/:groupId/members', groupsController.getGroupMembersById);
+
+router.delete('/groups/:groupId/members/:employeeId', groupsController.deleteGroupMember);
 
 
 module.exports = router;
