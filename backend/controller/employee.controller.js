@@ -19,8 +19,8 @@ class EmployeController {
             } = req.body
 
             // required fields according to DB schema
-            if (!name || !last_name || !organization_id || !education) {
-                return res.status(400).json({ error: 'Missing required fields: name, last_name, organization_id, education' })
+            if (!name || !last_name || !organization_id) {
+                return res.status(400).json({ error: 'Missing required fields: name, last_name, organization_id' })
             }
 
             const result = await db.query(
@@ -37,7 +37,7 @@ class EmployeController {
                     grade || null,
                     phone || null,
                     email || null,
-                    education
+                    education || null
                 ]
             )
 

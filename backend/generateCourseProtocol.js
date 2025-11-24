@@ -47,6 +47,7 @@ function generateProtocolDocx(data) {
   const doc = new Docxtemplater(zip, {
     paragraphLoop: true,
     linebreaks: true,
+    nullGetter: () => ''
   });
 
   doc.setData({
