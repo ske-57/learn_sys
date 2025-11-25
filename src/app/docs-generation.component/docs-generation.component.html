@@ -162,6 +162,28 @@
             </option>
           </select>
         </div>
+
+        <div class="param-field">
+          <div class="param-header">
+            <span class="param-label">Причина проверки</span>
+            <button
+              class="param-clear"
+              type="button"
+              (click)="clearGroup()"
+            >
+              ✕
+            </button>
+          </div>
+          <select
+            class="param-control"
+            [(ngModel)]="params.group"
+          >
+            <option [ngValue]="null" disabled>Выберите причину</option>
+            <option *ngFor="let r of reasons" [ngValue]="r.id">
+              {{ r.name }}
+            </option>
+          </select>
+        </div>
       </section>
     </div>
   </section>

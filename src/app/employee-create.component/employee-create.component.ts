@@ -26,7 +26,10 @@ export class EmployeeCreateComponent {
   };
 
   onSubmit(form: NgForm): void {
-    if (form.invalid) return;
+    if (form.invalid) {
+      alert('Заполните обязательные поля: имя, фамилию, организацию')
+      return
+    };
 
     // здесь делаешь запрос на backend и т.п.
     this.employeeService.createEmployee(this.employee).subscribe({

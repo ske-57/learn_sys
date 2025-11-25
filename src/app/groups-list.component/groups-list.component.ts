@@ -77,6 +77,7 @@ export class GroupsListComponent implements OnInit {
   // сохранить новую группу
   onSave(form: NgForm): void {
     if (form.invalid) {
+      alert('Вам нужно обяхательно ввести номер группы, курс обучения и дату начала или конца');
       return;
     }
 
@@ -88,8 +89,12 @@ export class GroupsListComponent implements OnInit {
         this.isCreating = false;
         this.loadGroups();
       },
-      error: (error) => {
-        console.error('Ошибка при создании группы', error);
+      error: (err) => {
+        if (err.status === 409) {
+          console.error(err.error.error);
+          alert('Группа с таким номером уже существует');
+        }
+        else console.error('Ошибка при создании группы', err);
       },
     });
   }

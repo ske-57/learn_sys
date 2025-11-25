@@ -30,6 +30,10 @@ export class DocsGenerationComponent implements OnInit {
   private groupMembers: GroupMember[] = [];
   private groupInfo: Group | null = null;
   private courseInfo: Course | null = null;
+  reasons: any[] = [
+    {id: 1, name: 'Очередная'},
+    {id: 2, name: 'Внеочередная'}
+    ]
   groups: GroupWithDetails[] = [];
   organizations: {id : number, name: string}[] = [];
   params: any = {
@@ -37,7 +41,6 @@ export class DocsGenerationComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('Docs Generation Component initialized');
     this.organizationsService.getOrganizations().subscribe({
       next: (data) => {
         this.organizations = data;
@@ -58,7 +61,7 @@ export class DocsGenerationComponent implements OnInit {
   }
 
   generateEntollmentProtocol(): void {
-    if (!this.validateParams()) return;
+    if (!this.validateParams()) return
     // Логика генерации отчета
     console.log('Generating entollmentreport with params:', this.params);
   }
@@ -70,7 +73,7 @@ export class DocsGenerationComponent implements OnInit {
   }
   
   generateCourseProtocol(): void {
-  if (!this.validateParams()) return;
+  if (!this.validateParams()) return
 
   const groupId = this.params.group;
 
@@ -174,10 +177,12 @@ export class DocsGenerationComponent implements OnInit {
   validateParams(): boolean {
     if (!this.params.group) {
       console.error('Group parameter is required to generate course report');
+      alert('Выберите группу');
       return false;
     }
     if (!this.params.trainingOrg) {
       console.error('Training Organization parameter is required to generate course report');
+      alert('Выберите обучающуюю организацию');
       return false;
     }
     return true;
