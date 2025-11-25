@@ -93,10 +93,12 @@ export class CourseEditComponent implements OnInit, OnDestroy {
   saveLesson(): void {
     if (!this.newLesson.name || this.newLesson.name.trim() === '') {
       console.error(`Name cant be empty ${this.newLesson.name}`);
+      alert('Название не может быть пустым');
       return;
     }
     if (!this.newLesson.hours || this.newLesson.hours < 0) {
       console.error(`Hours cant be less than zero or empty ${this.newLesson.hours}`);
+      alert('Часы не могут быть меньше или равны 0');
       return;
     }
     this.coursesService.addLesson(this.courseId, this.newLesson).subscribe({

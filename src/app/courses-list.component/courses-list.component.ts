@@ -73,6 +73,7 @@ export class CoursesListComponent implements OnInit, OnDestroy {
   // сохранить новый курс
   onSave(form: NgForm): void {
     if (form.invalid) {
+      alert('Название курса - обязательно!');
       return;
     }
     this.coursesSerivce.createCourse(this.newCourse).subscribe({
