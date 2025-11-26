@@ -81,7 +81,7 @@ export class GroupsListComponent implements OnInit {
       return;
     }
 
-    this.newGroup.end_date = this.newGroup.start_date // временно, пока нет поля ввода (add 10 days)
+    // this.newGroup.end_date = this.newGroup.start_date // временно, пока нет поля ввода (add 10 days)
 
     this.groupsService.createGroup(this.newGroup).subscribe({
       next: () => {

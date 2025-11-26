@@ -15,7 +15,7 @@ const app = express();
 app.use(express.json())
 app.use(cors());
 
-app.get('/health', (req, res) => res.sendStatus(200)); // Дефолт проверка на доступност
+app.get('/health', (req, res) => res.sendStatus(200)); // Дефолт проверка на доступность
 app.use('/api', employeeRouter)
 app.use('/api', courseRouter)
 app.use('/api', groupRouter)
