@@ -141,7 +141,7 @@ class EmployeController {
     }
 
     // Soft delete an employee (set is_active = false)
-    async softDeleteEmploye(req, res) {
+    async deactivateEmployee(req, res) {
         try {
             const { id } = req.params
             const result = await db.query(`UPDATE employees SET is_active = false WHERE id = $1 RETURNING *`, [id])

@@ -16,7 +16,7 @@ import { EmployeesService } from '../services/employees/employees.service';
 export class EmployeeCreateComponent {
   private router = inject(Router);
   private employeeService = inject(EmployeesService);
-  organizations: {id:number,name:string}[] = [];
+  organizations: {id:number, name:string}[] = [];
   employee: EmployeeCreateDTO = {
     name: '',
     last_name: '',

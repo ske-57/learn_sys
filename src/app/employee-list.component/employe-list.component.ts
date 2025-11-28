@@ -21,7 +21,43 @@ export class EmployeListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.employees = [];
+  }
+
+  deactivateEmployee(employeeId: number): void {
+    this.employeService.deactivateEmployee(employeeId).subscribe({
+      next: (data) => this.loadEmployees(),
+      error: (err) => console.error('Error, when deactivating employee', err)
+    });
+  }
+
+  navigateToEmployeeCreate(): void {
+    // Логика навигации к компоненту создания сотрудника
+    this.router.navigate(['/create-employee']);
+  }
+
+  navigateToCourses(): void {
+    this.router.navigate(['/courses']);
+  }
+
+  navigateToGroups(): void {
+    this.router.navigate(['/groups']);
+  }
+
+  navigateToDocs(): void {
+    this.router.navigate(['/docs']);
+  }
+
+  private loadEmployees(): void {
+
+    this.employeService.getEmployees().subscribe({
+      next: (data) => {
+        this.employees = data;
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    })
+
   }
 
   private loadEmployeesMock(): void {
@@ -72,35 +108,5 @@ export class EmployeListComponent implements OnInit, OnDestroy {
         is_active: false
       }
     ]
-  }
-
-  private loadEmployees(): void {
-
-    this.employeService.getEmployees().subscribe({
-      next: (data) => {
-        this.employees = data;
-      },
-      error: (error) => {
-        console.error(error);
-      }
-    })
-
-  }
-
-  navigateToEmployeeCreate(): void {
-    // Логика навигации к компоненту создания сотрудника
-    this.router.navigate(['/create-employee']);
-  }
-
-  navigateToCourses(): void {
-    this.router.navigate(['/courses']);
-  }
-
-  navigateToGroups(): void {
-    this.router.navigate(['/groups']);
-  }
-
-  navigateToDocs(): void {
-    this.router.navigate(['/docs']);
   }
 }

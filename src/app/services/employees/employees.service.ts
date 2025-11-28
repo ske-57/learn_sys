@@ -34,4 +34,8 @@ export class EmployeesService {
     return this.http.get<{id: number, name: string}[]>(`${this.baseApi}/organizations`);
   }
 
+  deactivateEmployee(employeeId: number): Observable<Employee> {
+    return this.http.post<Employee>(`${this.baseApi}/employees/${employeeId}/deactivate`, null);
+  }
+
 }

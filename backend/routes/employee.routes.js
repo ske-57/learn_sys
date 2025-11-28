@@ -8,7 +8,7 @@ router.get('/employees', employeeController.getEmployees)
 
 router.get('/employees/simple', employeeController.getSimpleEmployees)
 // Soft delete employee by id
-router.post('/employees/:id', employeeController.softDeleteEmploye)
+router.post('/employees/:id/deactivate', employeeController.deactivateEmployee)
 
 // Helper api endpoint to get organizations
 router.get('/organizations', employeeController.getOrganizations)
