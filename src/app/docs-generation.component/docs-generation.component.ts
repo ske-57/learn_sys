@@ -26,16 +26,16 @@ export class DocsGenerationComponent implements OnInit {
   private groupsService = inject(GroupsService);
   private coursesService = inject(CoursesService);
   private organizationsService = inject(OrganizationsService);
-  private makeCourseProtocolService = inject(MakeCourseProtocolService);
+  private makeProtocolService = inject(MakeCourseProtocolService);
   private groupMembers: GroupMember[] = [];
   private groupInfo: Group | null = null;
   private courseInfo: Course | null = null;
   reasons: any[] = [
-    {id: 1, name: 'Очередная'},
-    {id: 2, name: 'Внеочередная'}
-    ]
+    { id: 1, name: 'Очередная' },
+    { id: 2, name: 'Внеочередная' }
+  ]
   groups: GroupWithDetails[] = [];
-  organizations: {id : number, name: string}[] = [];
+  organizations: { id: number, name: string }[] = [];
   params: any = {
 
   }
@@ -68,45 +68,32 @@ export class DocsGenerationComponent implements OnInit {
 
   generateVisitProtocol(): void {
     if (!this.validateParams()) return;
+
+    const groupId = this.params.group;
     // Логика генерации отчета
     console.log('Generating visit report with params:', this.params);
-  }
-  
-  generateCourseProtocol(): void {
-  if (!this.validateParams()) return
+    this.groupsService.getGroupInfo(groupId).subscribe({
+      next: (group) => {
+        this.groupInfo = group;
 
-  const groupId = this.params.group;
+        forkJoin({
+          members: this.groupsService.getGroupMembers(groupId),
+          course: this.coursesService.getCourseById(this.groupInfo.course_id),
+        }).subscribe({
+          next: ({ members, course }) => {
+            this.groupMembers = members;
+            this.courseInfo = course;
 
-  // 1. Сначала получаем данные группы (чтобы узнать course_id)
-  this.groupsService.getGroupInfo(groupId).subscribe({
-    next: (group) => {
-      this.groupInfo = group;
+            const data = this.getAllData();
 
-      // 2. Когда группа получена — параллельно грузим:
-      //    - участников группы
-      //    - данные курса по course_id
-      forkJoin({
-        members: this.groupsService.getGroupMembers(groupId),
-        course: this.coursesService.getCourseById(this.groupInfo.course_id),
-      }).subscribe({
-        next: ({ members, course }) => {
-          this.groupMembers = members;
-          this.courseInfo = course;
+            console.log("data intro = ", data);
 
-          // 3. Теперь все данные на месте — собираем объект data
-          const data = this.getAllData();
-
-          console.log('Data =', data);
-
-          // 4. Здесь уже можно дернуть бэкенд на генерацию файла
-          // (если твой MakeCourseProtocolService так делает)
-          this.makeCourseProtocolService.makeCourseProtocol(data)
-            .subscribe({
+            this.makeProtocolService.makeIntroProtocol(data).subscribe({
               next: (blob) => {
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = 'protocol_result.docx';
+                a.download = 'protocol_into_result.docx';
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -116,25 +103,83 @@ export class DocsGenerationComponent implements OnInit {
                 console.error('Ошибка при скачивании протокола', err);
               }
             });
-        },
-        error: (error) => {
-          console.error('Ошибка при загрузке участников или курса', error);
-        },
-      });
-    },
-    error: (error) => {
-      console.error('Ошибка при загрузке данных группы', error);
-    },
-  });
-}
+          },
+          error: (error) => {
+            console.error('Ошибка при загрузке участников или курса', error);
+          },
+        });
+      },
+      error: (error) => {
+        console.error('Ошибка при загрузке данных группы', error);
+      },
+    });
+  }
+
+  generateCourseProtocol(): void {
+    if (!this.validateParams()) return
+
+    const groupId = this.params.group;
+
+    // 1. Сначала получаем данные группы (чтобы узнать course_id)
+    this.groupsService.getGroupInfo(groupId).subscribe({
+      next: (group) => {
+        this.groupInfo = group;
+
+        // 2. Когда группа получена — параллельно грузим:
+        //    - участников группы
+        //    - данные курса по course_id
+        forkJoin({
+          members: this.groupsService.getGroupMembers(groupId),
+          course: this.coursesService.getCourseById(this.groupInfo.course_id),
+        }).subscribe({
+          next: ({ members, course }) => {
+            this.groupMembers = members;
+            this.courseInfo = course;
+
+            // 3. Теперь все данные на месте — собираем объект data
+            const data = this.getAllData();
+
+            console.log('Data =', data);
+
+            // 4. Здесь уже можно дернуть бэкенд на генерацию файла
+            // (если твой MakeCourseProtocolService так делает)
+            this.makeProtocolService.makeCourseProtocol(data)
+              .subscribe({
+                next: (blob) => {
+                  const url = window.URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = 'protocol_result.docx';
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                  window.URL.revokeObjectURL(url);
+                },
+                error: (err) => {
+                  console.error('Ошибка при скачивании протокола', err);
+                }
+              });
+          },
+          error: (error) => {
+            console.error('Ошибка при загрузке участников или курса', error);
+          },
+        });
+      },
+      error: (error) => {
+        console.error('Ошибка при загрузке данных группы', error);
+      },
+    });
+  }
 
 
-  getAllData(): {group_id: number, course_name: string, hours: number, employee: GroupMember[]} {
+  getAllData(): { group_id: number, course_name: string, hours: number, employee: GroupMember[] } {
     const data = {
       group_id: this.groupInfo?.id || -1,
       course_name: this.courseInfo?.name || 'Nothing',
       hours: this.courseInfo?.hours || -1,
-      employee: this.groupMembers
+      employee: this.groupMembers,
+      start_date: this.groupInfo?.start_date,
+      end_date: this.groupInfo?.end_date || -1
     }
     return data;
   }

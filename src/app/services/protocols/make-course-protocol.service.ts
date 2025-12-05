@@ -21,4 +21,14 @@ export class MakeCourseProtocolService {
       }
     );
   }
+
+  makeIntroProtocol(data: any): Observable<Blob> {
+    return this.http.post(
+      `${this.baseApi}/generate-intro-protocol`,
+      data,
+      {
+        responseType: 'blob' as 'blob',
+      }
+    );
+  }
 }

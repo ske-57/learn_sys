@@ -8,6 +8,7 @@ const organizationRouter = require('./routes/organizations.routes');
 const { generateProtocolDocx } = require('./generateCourseProtocol');
 const cors = require('cors');
 const http = require('http');
+const { generateIntroProtocolDocx } = require('./generateIntroProtocol');
 
 const PORT = process.env.PORT || '443';
 const app = express();
@@ -30,6 +31,25 @@ app.post('/api/generate-course-protocol', async (req, res) => {
         res.setHeader(
             'Content-Disposition',
             'attachment; filename=course_protocol.docx');
+        res.setHeader(
+            'Content-Type',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+        res.send(buffer);
+    } catch (error) {
+        console.error('Error generating course protocol:', error);
+        res.status(500).json({ error: 'Failed to generate course protocol' });
+    }
+})
+
+app.post('/api/generate-intro-protocol', async (req, res) => {
+    try {
+        const data = req.body;
+
+        const buffer = generateIntroProtocolDocx(data);
+
+        res.setHeader(
+            'Content-Disposition',
+            'attachment; filename=intro_protocol.docx');
         res.setHeader(
             'Content-Type',
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
