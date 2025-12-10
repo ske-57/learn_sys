@@ -30,14 +30,14 @@ app.post('/api/generate-comission-protocol', async (req, res) => {
 
         res.setHeader(
             'Content-Disposition',
-            'attachment; filename=course_protocol.docx');
+            'attachment; filename=comission_protocol.docx');
         res.setHeader(
             'Content-Type',
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
         res.send(buffer);
     } catch (error) {
-        console.error('Error generating course protocol:', error);
-        res.status(500).json({ error: 'Failed to generate course protocol' });
+        console.error('Error generating comission protocol:', error);
+        res.status(500).json({ error: 'Failed to generate comission protocol' });
     }
 })
 
@@ -49,14 +49,14 @@ app.post('/api/generate-accepted-protocol', async (req, res) => {
 
         res.setHeader(
             'Content-Disposition',
-            'attachment; filename=intro_protocol.docx');
+            'attachment; filename=accepted_protocol.docx');
         res.setHeader(
             'Content-Type',
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
         res.send(buffer);
     } catch (error) {
-        console.error('Error generating course protocol:', error);
-        res.status(500).json({ error: 'Failed to generate course protocol' });
+        console.error('Error generating accepted protocol:', error);
+        res.status(500).json({ error: 'Failed to generate accepted protocol' });
     }
 })
 
