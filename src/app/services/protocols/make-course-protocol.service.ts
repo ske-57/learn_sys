@@ -12,7 +12,7 @@ export class MakeCourseProtocolService {
 
   constructor (private http: HttpClient) {}
 
-  makeCourseProtocol(data: any): Observable<Blob> {
+  makeComissionProtocol(data: any): Observable<Blob> {
     return this.http.post(
       `${this.baseApi}/generate-comission-protocol`,
       data,                                            // <-- тело запроса
@@ -22,7 +22,7 @@ export class MakeCourseProtocolService {
     );
   }
 
-  makeIntroProtocol(data: any): Observable<Blob> {
+  makeAcceptProtocol(data: any): Observable<Blob> {
     return this.http.post(
       `${this.baseApi}/generate-accepted-protocol`,
       data,
@@ -30,5 +30,14 @@ export class MakeCourseProtocolService {
         responseType: 'blob' as 'blob',
       }
     );
+  }
+
+  makeVisitProtocol(data: any): Observable<Blob> {
+    return this.http.post(`${this.baseApi}/generate-visiting-protocol`,
+      data,
+      {
+        responseType: 'blob' as 'blob',
+      }
+    )
   }
 }

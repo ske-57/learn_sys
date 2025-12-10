@@ -9,6 +9,7 @@ const { generateComissionProtocol } = require('./generateComissionProtocol');
 const cors = require('cors');
 const http = require('http');
 const { generateAcceptedProtocol } = require('./generateAcceptedProtocol');
+const { generateVisitingProtocol } = require('./generateVisitingProtocol');
 
 const PORT = process.env.PORT || '443';
 const app = express();
@@ -57,6 +58,25 @@ app.post('/api/generate-accepted-protocol', async (req, res) => {
     } catch (error) {
         console.error('Error generating accepted protocol:', error);
         res.status(500).json({ error: 'Failed to generate accepted protocol' });
+    }
+})
+
+app.post('/api/generate-visiting-protocol', async (req, res) => {
+    try {
+        const data = req.body;
+
+        const buffer = generateVisitingProtocol(data);
+
+        res.setHeader(
+            'Content-Disposition',
+            'attachment; filename=visiting_protocol.docx');
+        res.setHeader(
+            'Content-Type',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+        res.send(buffer);
+    } catch (error) {
+        console.error('Error generating visiting protocol:', error);
+        res.status(500).json({ error: 'Failed to generate visiting protocol' });
     }
 })
 

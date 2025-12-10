@@ -63,7 +63,52 @@ export class DocsGenerationComponent implements OnInit {
   generateVisitProtocol(): void {
     if (!this.validateParams()) return
     // Логика генерации отчета
-    console.log('Generating entollmentreport with params:', this.params);
+    console.log('Generating visit with params:', this.params);
+    const groupId = this.params.group;
+
+    this.groupsService.getGroupInfo(groupId).subscribe({
+      next: (group) => {
+        this.groupInfo = group;
+
+        forkJoin({
+          members: this.groupsService.getGroupMembers(groupId),
+          course: this.coursesService.getCourseById(this.groupInfo.course_id),
+        }).subscribe({
+          next: ({ members, course }) => {
+            this.groupMembers = members;
+            this.courseInfo = course;
+
+            const data = this.getAllData();
+
+            console.log("data intro = ", data);
+
+            this.makeProtocolService.makeVisitProtocol(data).subscribe({
+              next: (blob) => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'protocol_visit_result.docx';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+              },
+              error: (err) => {
+                console.error('Ошибка при скачивании протокола', err);
+              }
+            });
+          },
+          error: (error) => {
+            console.error('Ошибка при загрузке участников или курса', error);
+          },
+        });
+      },
+      error: (error) => {
+        console.error('Ошибка при загрузке данных группы', error);
+      },
+
+    })
+
   }
 
   generateAcceptedProtocol(): void {
@@ -88,7 +133,7 @@ export class DocsGenerationComponent implements OnInit {
 
             console.log("data intro = ", data);
 
-            this.makeProtocolService.makeIntroProtocol(data).subscribe({
+            this.makeProtocolService.makeAcceptProtocol(data).subscribe({
               next: (blob) => {
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -115,7 +160,7 @@ export class DocsGenerationComponent implements OnInit {
     });
   }
 
-  generateCourseProtocol(): void {
+  generateComissionProtocol(): void {
     if (!this.validateParams()) return
 
     const groupId = this.params.group;
@@ -143,7 +188,7 @@ export class DocsGenerationComponent implements OnInit {
 
             // 4. Здесь уже можно дернуть бэкенд на генерацию файла
             // (если твой MakeCourseProtocolService так делает)
-            this.makeProtocolService.makeCourseProtocol(data)
+            this.makeProtocolService.makeComissionProtocol(data)
               .subscribe({
                 next: (blob) => {
                   const url = window.URL.createObjectURL(blob);
