@@ -93,7 +93,7 @@ export class DocsGenerationComponent implements OnInit {
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = 'protocol_into_result.docx';
+                a.download = 'protocol_accepted_result.docx';
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -149,7 +149,7 @@ export class DocsGenerationComponent implements OnInit {
                   const url = window.URL.createObjectURL(blob);
                   const a = document.createElement('a');
                   a.href = url;
-                  a.download = 'protocol_result.docx';
+                  a.download = 'protocol_comission_result.docx';
                   document.body.appendChild(a);
                   a.click();
                   document.body.removeChild(a);
