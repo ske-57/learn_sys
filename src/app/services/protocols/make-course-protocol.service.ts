@@ -14,7 +14,7 @@ export class MakeCourseProtocolService {
 
   makeCourseProtocol(data: any): Observable<Blob> {
     return this.http.post(
-      `${this.baseApi}/generate-course-protocol`,
+      `${this.baseApi}/generate-comission-protocol`,
       data,                                            // <-- тело запроса
       {
         responseType: 'blob' as 'blob',                // <-- важный каст
@@ -24,7 +24,7 @@ export class MakeCourseProtocolService {
 
   makeIntroProtocol(data: any): Observable<Blob> {
     return this.http.post(
-      `${this.baseApi}/generate-intro-protocol`,
+      `${this.baseApi}/generate-accepted-protocol`,
       data,
       {
         responseType: 'blob' as 'blob',

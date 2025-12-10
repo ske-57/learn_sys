@@ -50,7 +50,7 @@ function formatRussianDate(date) {
  *   ]
  * }
  */
-function generateIntroProtocolDocx(data) {
+function generateAcceptedProtocol(data) {
   const {
     group_id,
     course_name,
@@ -67,7 +67,7 @@ function generateIntroProtocolDocx(data) {
   const start_date = formatedStartDate || formatRussianDate(new Date());
   const end_date = formatedEndDate|| '';
 
-  const templatePath = path.resolve(__dirname, './Protocol-intro-template.docx');
+  const templatePath = path.resolve(__dirname, './Protocol-accepted-template.docx');
   const content = fs.readFileSync(templatePath, 'binary');
 
   const zip = new PizZip(content);
@@ -105,6 +105,6 @@ function generateIntroProtocolDocx(data) {
 }
 
 module.exports = {
-  generateIntroProtocolDocx,
+  generateAcceptedProtocol,
   formatRussianDate,
 };

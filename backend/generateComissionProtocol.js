@@ -30,7 +30,7 @@ function formatRussianDate(date) {
  *   ]
  * }
  */
-function generateProtocolDocx(data) {
+function generateComissionProtocol(data) {
   const {
     group_id,
     course_name,
@@ -40,7 +40,7 @@ function generateProtocolDocx(data) {
 
   const date_current = data.date_current || formatRussianDate(new Date());
 
-  const templatePath = path.resolve(__dirname, './Protocol-template.docx');
+  const templatePath = path.resolve(__dirname, './Protocol-comission-template.docx');
   const content = fs.readFileSync(templatePath, 'binary');
 
   const zip = new PizZip(content);
@@ -74,6 +74,6 @@ function generateProtocolDocx(data) {
 }
 
 module.exports = {
-  generateProtocolDocx,
+  generateComissionProtocol,
   formatRussianDate,
 };

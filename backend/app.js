@@ -5,10 +5,10 @@ const employeeRouter = require('./routes/employee.routes');
 const courseRouter = require('./routes/course.routes');
 const groupRouter = require('./routes/group.routes');
 const organizationRouter = require('./routes/organizations.routes');
-const { generateProtocolDocx } = require('./generateCourseProtocol');
+const { generateComissionProtocol } = require('./generateComissionProtocol');
 const cors = require('cors');
 const http = require('http');
-const { generateIntroProtocolDocx } = require('./generateIntroProtocol');
+const { generateAcceptedProtocol } = require('./generateAcceptedProtocol');
 
 const PORT = process.env.PORT || '443';
 const app = express();
@@ -22,11 +22,11 @@ app.use('/api', courseRouter)
 app.use('/api', groupRouter)
 app.use('/api', organizationRouter);
 
-app.post('/api/generate-course-protocol', async (req, res) => {
+app.post('/api/generate-comission-protocol', async (req, res) => {
     try {
         const data = req.body;
 
-        const buffer = generateProtocolDocx(data);
+        const buffer = generateComissionProtocol(data);
 
         res.setHeader(
             'Content-Disposition',
@@ -41,11 +41,11 @@ app.post('/api/generate-course-protocol', async (req, res) => {
     }
 })
 
-app.post('/api/generate-intro-protocol', async (req, res) => {
+app.post('/api/generate-accepted-protocol', async (req, res) => {
     try {
         const data = req.body;
 
-        const buffer = generateIntroProtocolDocx(data);
+        const buffer = generateAcceptedProtocol(data);
 
         res.setHeader(
             'Content-Disposition',
