@@ -60,13 +60,13 @@ export class DocsGenerationComponent implements OnInit {
     });
   }
 
-  generateEntollmentProtocol(): void {
+  generateVisitProtocol(): void {
     if (!this.validateParams()) return
     // Логика генерации отчета
     console.log('Generating entollmentreport with params:', this.params);
   }
 
-  generateVisitProtocol(): void {
+  generateAcceptedProtocol(): void {
     if (!this.validateParams()) return;
 
     const groupId = this.params.group;
