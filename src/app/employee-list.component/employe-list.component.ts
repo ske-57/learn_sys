@@ -1,12 +1,14 @@
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { EmployeeWithOrg, EmployeesService } from '../services/employees/employees.service';
 import { Router } from '@angular/router';
+import { OrganizationsService } from '../services/organizations/organizations.service';
 
 @Component({
   selector: 'app-employe-list.component',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './employe-list.component.html',
   styleUrl: './employe-list.component.css',
 })
@@ -14,7 +16,11 @@ export class EmployeListComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   employees: EmployeeWithOrg[] = [];
   private employeService = inject(EmployeesService);
+  private organizationsService = inject(OrganizationsService);
 
+  // UI state for creating a new organization
+  showOrgInput = false;
+  newOrganizationName = '';
 
   ngOnInit(): void {
     this.loadEmployees();
@@ -33,6 +39,34 @@ export class EmployeListComponent implements OnInit, OnDestroy {
   navigateToEmployeeCreate(): void {
     // Логика навигации к компоненту создания сотрудника
     this.router.navigate(['/create-employee']);
+  }
+
+  toggleOrgInput(): void {
+    this.showOrgInput = !this.showOrgInput;
+    if (!this.showOrgInput) {
+      this.newOrganizationName = '';
+    }
+  }
+
+  createNewOrganization(name?: string): void {
+    const orgName = (name ?? this.newOrganizationName)?.toString().trim();
+    if (!orgName) {
+      alert('Введите название организации');
+      return;
+    }
+
+    this.organizationsService.createOrganization(orgName).subscribe({
+      next: (data) => {
+        console.log('Organization created', data);
+        // reset UI
+        this.newOrganizationName = '';
+        this.showOrgInput = false;
+      },
+      error: (err) =>{
+        console.error('Error, when creating organization', err);
+        alert('Ошибка при создании организации');
+      }
+    });
   }
 
   navigateToCourses(): void {

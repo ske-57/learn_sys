@@ -35,6 +35,21 @@
                 </span>
                 Отчеты
             </button>
+
+            <button class="tab create" (click)="toggleOrgInput()">
+                <span class="tab-ico">
+                    <svg viewBox="0 0 24 24">
+                        <use href="#plus-circle"></use>
+                    </svg>
+                </span>
+                Создать организацию
+            </button>
+
+            <div class="new-org" *ngIf="showOrgInput">
+                <input type="text" placeholder="Название организации" [(ngModel)]="newOrganizationName" />
+                <button class="btn primary" (click)="createNewOrganization()" [disabled]="!newOrganizationName.trim()">Создать</button>
+                <button class="btn" (click)="toggleOrgInput()">Отмена</button>
+            </div>
         </nav>
     </div>
 
