@@ -23,8 +23,10 @@ CREATE TABLE IF NOT EXISTS organizations (
 CREATE TABLE IF NOT EXISTS courses (
     id    SERIAL PRIMARY KEY,
     name  VARCHAR(512) NOT NULL,
+    conclusion TEXT,
     hours INTEGER,
-    mark  VARCHAR(32)
+    mark  VARCHAR(32),
+    description TEXT
 );
 
 -- Сотрудники
@@ -39,7 +41,7 @@ CREATE TABLE IF NOT EXISTS employees (
     grade           VARCHAR(512),
     phone           VARCHAR(32),
     email           VARCHAR(128),
-    education       VARCHAR(512) NOT NULL,
+    education       VARCHAR(512),
     is_active       BOOLEAN NOT NULL DEFAULT true
 );
 
