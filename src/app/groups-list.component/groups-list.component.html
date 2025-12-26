@@ -153,7 +153,6 @@
       <div class="tr head">
         <div>Группа</div>
         <div>Курс</div>
-        <div>Организация</div>
         <div>Дата начала</div>
         <div>Дата конца</div>
         <div></div>
@@ -163,7 +162,6 @@
         <!-- предполагаю, что теперь в GroupWithDetails есть поле number -->
         <div class="g-id">{{ g.id }}</div>
         <div class="g-course">{{ g.course_name }}</div>
-        <div class="g-org">{{ g.course_id }} - course id</div>
         <div class="g-date">
           {{ g.start_date | date: 'dd.MM.yyyy' }}
         </div>

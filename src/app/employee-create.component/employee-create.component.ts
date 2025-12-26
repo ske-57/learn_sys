@@ -43,9 +43,7 @@ export class EmployeeCreateComponent {
   }
 
   onReset(form: NgForm): void {
-    form.resetForm();
-    // можно задать дефолты после reset, если надо:
-    this.employee = {name: '', last_name:'', organization_id: null!, education: '', is_active: true};
+    this.navigateToEmployees();
   }
 
   loadOrganizations(): void {

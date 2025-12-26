@@ -117,27 +117,17 @@
           </select>
         </div>
 
-        <!-- Обучающая организация: ВЫБОР -->
+        <!-- Обучающая организация: ТЕКСТОВОЕ ПОЛЕ -->
         <div class="param-field">
           <div class="param-header">
             <span class="param-label">Обучающая организация *</span>
-            <button
-              class="param-clear"
-              type="button"
-              (click)="clearTrainingOrg()"
-            >
-              ✕
-            </button>
           </div>
-          <select
+          <input
+            type="text"
             class="param-control"
+            placeholder="Введите организацию"
             [(ngModel)]="params.trainingOrg"
-          >
-            <option [ngValue]="null" disabled>Выберите организацию</option>
-            <option *ngFor="let org of organizations" [ngValue]="org.id">
-              {{ org.name }}
-            </option>
-          </select>
+          />
         </div>
 
         <!-- Обучаемая организация: ВЫБОР -->

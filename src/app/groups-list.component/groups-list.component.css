@@ -337,7 +337,7 @@
 .table-groups .tr.head > div:nth-child(4),
 .table-groups .tr.head > div:nth-child(5),
 .table-groups .g-date {
-  text-align: right;
+  text-align: left;
 }
 
 /* столбцы */

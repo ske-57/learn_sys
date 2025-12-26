@@ -82,9 +82,15 @@
 
     <!-- Блок добавления сотрудника -->
     <div class="add-member">
-      <button class="btn primary" type="button" (click)="toggleAddMember()">
-        Добавить сотрудника
-      </button>
+      <div class="add-member-actions">
+        <button class="btn primary" type="button" (click)="toggleAddMember()">
+          Добавить сотрудника из сущестующих
+        </button>
+
+        <button class="btn" type="button" (click)="toggleAddMemberManual()">
+          Добавить сотрудника вручную
+        </button>
+      </div>
 
       <div class="add-member-form" *ngIf="showAddMember">
         <div class="field">
@@ -115,6 +121,37 @@
             type="button"
             (click)="cancelAdd()"
           >
+            Отмена
+          </button>
+        </div>
+      </div>
+
+      <div class="add-member-form manual" *ngIf="showAddMemberManual">
+        <div class="field">
+          <label class="field-label">Имя *</label>
+          <input class="field-input" [(ngModel)]="manualMember.name" />
+        </div>
+        <div class="field">
+          <label class="field-label">Отчество</label>
+          <input class="field-input" [(ngModel)]="manualMember.middle_name" />
+        </div>
+        <div class="field">
+          <label class="field-label">Фамилия *</label>
+          <input class="field-input" [(ngModel)]="manualMember.last_name" />
+        </div>
+        <div class="field">
+          <label class="field-label">Организация *</label>
+          <select class="field-input" [(ngModel)]="manualMember.organization_id">
+            <option [ngValue]="null" disabled>Выберите организацию</option>
+            <option *ngFor="let o of organizations" [ngValue]="o.id">{{ o.name }}</option>
+          </select>
+        </div>
+
+        <div class="form-actions-member">
+          <button class="btn primary" type="button" (click)="saveMemberManual()">
+            Добавить
+          </button>
+          <button class="btn ghost" type="button" (click)="cancelAddManual()">
             Отмена
           </button>
         </div>

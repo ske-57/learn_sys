@@ -22,13 +22,24 @@ export class GroupsEditComponent implements OnInit {
   private groupsService = inject(GroupsService);
   groupId: number = -1;
   showAddMember: boolean = false;
+  showAddMemberManual: boolean = false;
   group_members: GroupMember[] = [];
   employees: Employee[] = [];
+  organizations: {id: number, name: string}[] = [];
   newMember: Employee = {
     id: null!,
     name: '',
     last_name: '',
     organization_id: null!,
+    education: '',
+    is_active: true
+  }
+
+  manualMember: any = {
+    name: '',
+    last_name: '',
+    middle_name: '',
+    organization_id: null,
     education: '',
     is_active: true
   }
@@ -50,6 +61,16 @@ export class GroupsEditComponent implements OnInit {
         console.error('Failed to load employees', err)
       }
     });
+
+    // Load organizations for manual creation
+    this.employeesService.getOrganizations().subscribe({
+      next: (list) => {
+        this.organizations = list;
+      },
+      error: (err) => {
+        console.error('Failed to load organizations', err);
+      }
+    });
   }
 
   removeMember(memberId: number): void {
@@ -66,10 +87,20 @@ export class GroupsEditComponent implements OnInit {
 
   toggleAddMember(): void {
     this.showAddMember = !this.showAddMember;
+    if (this.showAddMember) {
+      this.showAddMemberManual = false;
+    }
+  }
+
+  toggleAddMemberManual(): void {
+    this.showAddMemberManual = !this.showAddMemberManual;
+    if (this.showAddMemberManual) {
+      this.showAddMember = false;
+    }
   }
 
   saveMember(): void {
-    // Logic to save new member to group
+    // Logic to save new member to group (existing employee)
     this.groupsService.addEmployeeToGroup(this.groupId, this.newMember.id!).subscribe({
       next: (data) => {
         // Optionally refresh the member list
@@ -80,6 +111,36 @@ export class GroupsEditComponent implements OnInit {
         console.error('Error adding member to group', error);
       }
     });
+  }
+
+  saveMemberManual(): void {
+    // Create employee then add to group
+    this.employeesService.createEmployee(this.manualMember).subscribe({
+      next: (created: any) => {
+        const createdId = created?.id;
+        if (!createdId) {
+          console.error('Created employee id missing', created);
+          return;
+        }
+        this.groupsService.addEmployeeToGroup(this.groupId, createdId).subscribe({
+          next: () => {
+            this.showAddMemberManual = false;
+            this.manualMember = { name: '', last_name: '', middle_name: '', organization_id: null, education: '', is_active: true };
+            this.getMembers();
+          },
+          error: (err) => {
+            console.error('Error adding created employee to group', err);
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Failed to create employee', err);
+      }
+    });
+  }
+
+  cancelAddManual(): void {
+    this.showAddMemberManual = false;
   }
 
   getMembers(): void {

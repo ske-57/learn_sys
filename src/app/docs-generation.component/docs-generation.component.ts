@@ -272,7 +272,7 @@ export class DocsGenerationComponent implements OnInit {
     }
     if (!this.params.trainingOrg) {
       console.error('Training Organization parameter is required to generate course report');
-      alert('Выберите обучающуюю организацию');
+      alert('Введите обучающую организацию');
       return false;
     }
     return true;
@@ -283,7 +283,7 @@ export class DocsGenerationComponent implements OnInit {
   }
 
   clearTrainingOrg(): void {
-    this.params.trainingOrg = null!;
+    this.params.trainingOrg = '';
   }
 
   clearCustomerOrg(): void {

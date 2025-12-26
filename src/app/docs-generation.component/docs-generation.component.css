@@ -273,6 +273,7 @@
 
 /* общий стиль для инпута и select (как .input на формах курсов/групп) */
 .param-control {
+  box-sizing: border-box;
   width: 100%;
   height: 38px;
   border-radius: 12px;
@@ -283,6 +284,20 @@
   font: inherit;
   outline: none;
   margin-top: 2px;
+}
+
+select.param-control {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding-right: 36px; /* reserve space for custom arrow */
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 10px 6px;
+}
+
+input.param-control {
+  padding-right: 12px;
 }
 
 .param-control:focus {
