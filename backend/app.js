@@ -42,24 +42,67 @@ app.post('/api/generate-comission-protocol', async (req, res) => {
     }
 })
 
-app.post('/api/generate-accepted-protocol', async (req, res) => {
-    try {
-        const data = req.body;
+app.post('/api/generate-accepted-protocol', (req, res) => {
+  try {
+    const data = req.body ?? {};
 
-        const buffer = generateAcceptedProtocol(data);
-
-        res.setHeader(
-            'Content-Disposition',
-            'attachment; filename=accepted_protocol.docx');
-        res.setHeader(
-            'Content-Type',
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-        res.send(buffer);
-    } catch (error) {
-        console.error('Error generating accepted protocol:', error);
-        res.status(500).json({ error: 'Failed to generate accepted protocol' });
+    if (!data || typeof data !== 'object') {
+      return res.status(400).json({ error: 'Invalid request body. Expected JSON object.' });
     }
-})
+
+    const maybeBuffer = generateAcceptedProtocol(data);
+
+    // Если генератор внезапно async и вернул Promise
+    if (maybeBuffer && typeof maybeBuffer.then === 'function') {
+      return maybeBuffer
+        .then((buffer) => {
+          if (!Buffer.isBuffer(buffer)) {
+            return res.status(500).json({ error: 'Generator returned non-buffer result.' });
+          }
+
+          res.setHeader(
+            'Content-Disposition',
+            'attachment; filename="accepted_protocol.docx"'
+          );
+          res.setHeader(
+            'Content-Type',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+          );
+
+          return res.status(200).end(buffer);
+        })
+        .catch((error) => {
+          console.error('Error generating accepted protocol:', error);
+          if (!res.headersSent) {
+            return res.status(500).json({ error: 'Failed to generate accepted protocol' });
+          }
+        });
+    }
+
+    const buffer = maybeBuffer;
+
+    if (!Buffer.isBuffer(buffer)) {
+      return res.status(500).json({ error: 'Generator returned non-buffer result.' });
+    }
+
+    res.setHeader(
+      'Content-Disposition',
+      'attachment; filename="accepted_protocol.docx"'
+    );
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    );
+
+    return res.status(200).end(buffer);
+  } catch (error) {
+    console.error('Error generating accepted protocol:', error);
+    if (!res.headersSent) {
+      return res.status(500).json({ error: 'Failed to generate accepted protocol' });
+    }
+  }
+});
+
 
 app.post('/api/generate-visiting-protocol', async (req, res) => {
     try {
