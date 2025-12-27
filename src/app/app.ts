@@ -1,4 +1,5 @@
-import { Component, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
@@ -7,6 +8,13 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App {
+export class App implements OnInit {
   protected readonly title = signal('system_frontend');
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit(): void {
+    this.http.get('https://d5dtikhpg3nokckhah7v.zj2i1qoy.apigw.yandexcloud.net/health')
+      .subscribe({ next: () => {}, error: () => {} });
+  }
 }
