@@ -6,4 +6,5 @@ export type Course = {
   hours?: number | null;
   mark?: string | null;
   lessons?: Lesson[];
+  conclusion?: string | null;
 }

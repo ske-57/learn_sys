@@ -227,16 +227,17 @@ export class DocsGenerationComponent implements OnInit {
     }),
 
     map(({ members, course }) => {
-      // JSON строго под commission-шаблон
       return {
-        moisei_name: this.params.moiseiName ?? 'undefined',
+        // верхний уровень под шаблон
+        moisei_name: this.params.moiseiName ?? '',
         group_id: this.groupInfo?.id ?? -1,
-        end_date: this.groupInfo?.end_date ?? 'undefined',
+        end_date: this.groupInfo?.end_date ?? '',
 
-        course_name: course?.name ?? 'undefined',
-        hours: course?.hours ?? 'undefined',
+        course_name: course?.name ?? '',
+        hours: course?.hours ?? '',
 
-        employee: (members ?? []).map((m: any, idx: number) => {
+        // employees
+        employee: (members ?? []).map((m: any) => {
           const fio =
             (m?.name || m?.last_name || m?.middle_name)
               ? {
@@ -248,13 +249,14 @@ export class DocsGenerationComponent implements OnInit {
 
           return {
             ...fio,
-            organization_name: m?.organization_name ?? m?.organization ?? 'undefined',
-            grade: m?.grade ?? 'undefined',
+            organization_name: m?.organization_name ?? m?.organization ?? '',
+            // ✅ grade внутри employee
+            grade: m?.grade ?? '',
+            conclusion: course?.conclusion ?? '',
+            courses_mark: course?.mark ?? '',
 
-            // поля, которые есть в docx-шаблоне
-            random_number: m?.random_number ?? m?.ticket_number ?? Math.floor((Math.random() * (30 - 1) + 1)),
-            courses_mark: m?.courses_mark ?? m?.mark ?? 'undefined',
-            conclusion: m?.conclusion ?? 'undefined',
+            // номер билета (если не приходит с бэка — генерим)
+            random_number: m?.random_number ?? m?.ticket_number ?? (Math.floor(Math.random() * 30) + 1),
           };
         }),
       };
@@ -279,6 +281,7 @@ export class DocsGenerationComponent implements OnInit {
     window.URL.revokeObjectURL(url);
   });
 }
+
 
 
   getAllData(): { group_id: number, course_name: string, hours: number, employee: GroupMember[] } {

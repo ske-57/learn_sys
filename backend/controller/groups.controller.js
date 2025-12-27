@@ -138,7 +138,7 @@ class GroupsController {
             const { groupId } = req.params;
 
             const membersResult = await db.query(
-                `SELECT e.id, e.name, e.last_name, e.middle_name, o.name as organization_name
+                `SELECT e.id, e.name, e.last_name, e.middle_name, e.grade, o.name as organization_name
                  FROM group_members gm
                  JOIN employees e ON e.id = gm.employee_id
                  JOIN organizations o ON o.id = e.organization_id
