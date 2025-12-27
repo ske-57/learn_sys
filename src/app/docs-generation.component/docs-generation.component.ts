@@ -7,7 +7,6 @@ import { Group } from '../types/Groups/Group-type';
 import { GroupWithDetails } from '../types/Groups/GroupWithDetails-type';
 import { OrganizationsService } from '../services/organizations/organizations.service';
 import { MakeCourseProtocolService } from '../services/protocols/make-course-protocol.service';
-import { Employee } from '../types/Employee/Employee-type';
 import { GroupMember } from '../types/Groups/Group-members-type';
 import { Course } from '../types/Courses/Course-type';
 import { CoursesService } from '../services/courses/courses.service';
@@ -113,130 +112,149 @@ export class DocsGenerationComponent implements OnInit {
   }
 
   generateAcceptedProtocol(): void {
-  if (!this.validateParams()) return;
+    if (!this.validateParams()) return;
 
-  console.log('Generating accepted with params:', this.params);
+    console.log('Generating accepted with params:', this.params);
+
+    const groupId = Number(this.params.group);
+
+    this.groupsService.getGroupInfo(groupId).pipe(
+      tap((group) => (this.groupInfo = group)),
+
+      switchMap((group) =>
+        forkJoin({
+          members: this.groupsService.getGroupMembers(groupId),
+          course: this.coursesService.getCourseById(group.course_id),
+        }).pipe(
+          tap(({ members, course }) => {
+            this.groupMembers = members;
+            this.courseInfo = course;
+          }),
+          map(({ members, course }) => {
+            // Собираем JSON строго под ключи DOCX-шаблона
+            return {
+              group_id: this.groupInfo?.id ?? -1,
+              course_name: course?.name ?? '',
+              start_date: this.groupInfo?.start_date ?? '',
+              end_date: this.groupInfo?.end_date ?? '',
+              moisei_name: this.params.moiseiName ?? '',
+
+              employee: (members ?? []).map((m: any) => {
+                // если у участника уже есть раздельные поля — берём их,
+                // иначе пытаемся распарсить fullName
+                const fio =
+                  (m?.name || m?.last_name || m?.middle_name)
+                    ? {
+                      name: m?.name ?? '',
+                      last_name: m?.last_name ?? '',
+                      middle_name: m?.middle_name ?? '',
+                    }
+                    : this.splitFio(m?.fullName ?? m?.fio ?? '');
+
+                return {
+                  ...fio,
+                  organization_name: m?.organization_name ?? m?.organization ?? '',
+                };
+              }),
+            };
+          })
+        )
+      ),
+      switchMap((payload) => this.makeProtocolService.makeAcceptProtocol(payload)),
+      take(1),
+
+      catchError((err) => {
+        console.error('Ошибка при генерации accepted протокола', err);
+        alert('Не удалось сформировать протокол.');
+        return EMPTY;
+      })
+    ).subscribe((blob) => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'protocol_accepted_result.docx';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    });
+  }
+
+  generateComissionProtocol(): void {
+  if (!this.validateParams()) return;
 
   const groupId = Number(this.params.group);
 
   this.groupsService.getGroupInfo(groupId).pipe(
-    tap((group) => (this.groupInfo = group)),
+    tap((group) => {
+      this.groupInfo = group;
+    }),
 
     switchMap((group) =>
       forkJoin({
         members: this.groupsService.getGroupMembers(groupId),
         course: this.coursesService.getCourseById(group.course_id),
-      }).pipe(
-        tap(({ members, course }) => {
-          this.groupMembers = members;
-          this.courseInfo = course;
-        }),
-        map(({ members, course }) => {
-          // Собираем JSON строго под ключи DOCX-шаблона
-          return {
-            group_id: this.groupInfo?.id ?? -1,
-            course_name: course?.name ?? '',
-            start_date: this.groupInfo?.start_date ?? '',
-            end_date: this.groupInfo?.end_date ?? '',
-            moisei_name: this.params.moiseiName ?? '',
-
-            employee: (members ?? []).map((m: any) => {
-              // если у участника уже есть раздельные поля — берём их,
-              // иначе пытаемся распарсить fullName
-              const fio =
-                (m?.name || m?.last_name || m?.middle_name)
-                  ? {
-                      name: m?.name ?? '',
-                      last_name: m?.last_name ?? '',
-                      middle_name: m?.middle_name ?? '',
-                    }
-                  : this.splitFio(m?.fullName ?? m?.fio ?? '');
-
-              return {
-                ...fio,
-                organization_name: m?.organization_name ?? m?.organization ?? '',
-              };
-            }),
-          };
-        })
-      )
+      })
     ),
 
-    switchMap((payload) => this.makeProtocolService.makeAcceptProtocol(payload)),
+    tap(({ members, course }) => {
+      this.groupMembers = members;
+      this.courseInfo = course;
+    }),
+
+    map(({ members, course }) => {
+      // JSON строго под commission-шаблон
+      return {
+        moisei_name: this.params.moiseiName ?? 'undefined',
+        group_id: this.groupInfo?.id ?? -1,
+        end_date: this.groupInfo?.end_date ?? 'undefined',
+
+        course_name: course?.name ?? 'undefined',
+        hours: course?.hours ?? 'undefined',
+
+        employee: (members ?? []).map((m: any, idx: number) => {
+          const fio =
+            (m?.name || m?.last_name || m?.middle_name)
+              ? {
+                  name: m?.name ?? '',
+                  last_name: m?.last_name ?? '',
+                  middle_name: m?.middle_name ?? '',
+                }
+              : this.splitFio(m?.fullName ?? m?.fio ?? '');
+
+          return {
+            ...fio,
+            organization_name: m?.organization_name ?? m?.organization ?? 'undefined',
+            grade: m?.grade ?? 'undefined',
+
+            // поля, которые есть в docx-шаблоне
+            random_number: m?.random_number ?? m?.ticket_number ?? Math.floor((Math.random() * (30 - 1) + 1)),
+            courses_mark: m?.courses_mark ?? m?.mark ?? 'undefined',
+            conclusion: m?.conclusion ?? 'undefined',
+          };
+        }),
+      };
+    }),
+
+    switchMap((payload) => this.makeProtocolService.makeComissionProtocol(payload)),
     take(1),
 
     catchError((err) => {
-      console.error('Ошибка при генерации accepted протокола', err);
-      alert('Не удалось сформировать протокол.');
+      console.error('Ошибка при генерации/скачивании comission протокола', err);
+      alert('Не удалось сформировать протокол комиссии.');
       return EMPTY;
     })
   ).subscribe((blob) => {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'protocol_accepted_result.docx';
+    a.download = 'protocol_comission_result.docx';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     window.URL.revokeObjectURL(url);
   });
 }
-
-  generateComissionProtocol(): void {
-    if (!this.validateParams()) return
-
-    const groupId = this.params.group;
-
-    // 1. Сначала получаем данные группы (чтобы узнать course_id)
-    this.groupsService.getGroupInfo(groupId).subscribe({
-      next: (group) => {
-        this.groupInfo = group;
-
-        // 2. Когда группа получена — параллельно грузим:
-        //    - участников группы
-        //    - данные курса по course_id
-        forkJoin({
-          members: this.groupsService.getGroupMembers(groupId),
-          course: this.coursesService.getCourseById(this.groupInfo.course_id),
-        }).subscribe({
-          next: ({ members, course }) => {
-            this.groupMembers = members;
-            this.courseInfo = course;
-
-            // 3. Теперь все данные на месте — собираем объект data
-            const data = this.getAllData();
-
-            console.log('Data =', data);
-
-            // 4. Здесь уже можно дернуть бэкенд на генерацию файла
-            // (если твой MakeCourseProtocolService так делает)
-            this.makeProtocolService.makeComissionProtocol(data)
-              .subscribe({
-                next: (blob) => {
-                  const url = window.URL.createObjectURL(blob);
-                  const a = document.createElement('a');
-                  a.href = url;
-                  a.download = 'protocol_comission_result.docx';
-                  document.body.appendChild(a);
-                  a.click();
-                  document.body.removeChild(a);
-                  window.URL.revokeObjectURL(url);
-                },
-                error: (err) => {
-                  console.error('Ошибка при скачивании протокола', err);
-                }
-              });
-          },
-          error: (error) => {
-            console.error('Ошибка при загрузке участников или курса', error);
-          },
-        });
-      },
-      error: (error) => {
-        console.error('Ошибка при загрузке данных группы', error);
-      },
-    });
-  }
 
 
   getAllData(): { group_id: number, course_name: string, hours: number, employee: GroupMember[] } {
@@ -325,15 +343,15 @@ export class DocsGenerationComponent implements OnInit {
   }
 
   private splitFio(fullName: string): { name: string; last_name: string; middle_name: string } {
-  const parts = String(fullName ?? '').trim().split(/\s+/).filter(Boolean);
+    const parts = String(fullName ?? '').trim().split(/\s+/).filter(Boolean);
 
-  // В шаблоне печатается: "{name} {last_name} {middle_name}"
-  // Обычно вводят: "Иванов Иван Иванович" (Фамилия Имя Отчество)
-  return {
-    name: parts[0] ?? '',
-    last_name: parts[1] ?? '',
-    middle_name: parts.slice(2).join(' ') ?? '',
-  };
-}
+    // В шаблоне печатается: "{name} {last_name} {middle_name}"
+    // Обычно вводят: "Иванов Иван Иванович" (Фамилия Имя Отчество)
+    return {
+      name: parts[0] ?? '',
+      last_name: parts[1] ?? '',
+      middle_name: parts.slice(2).join(' ') ?? '',
+    };
+  }
 
 }

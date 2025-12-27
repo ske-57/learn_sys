@@ -23,24 +23,67 @@ app.use('/api', courseRouter)
 app.use('/api', groupRouter)
 app.use('/api', organizationRouter);
 
-app.post('/api/generate-comission-protocol', async (req, res) => {
-    try {
-        const data = req.body;
+app.post('/api/generate-comission-protocol', (req, res) => {
+  try {
+    const data = req.body ?? {};
 
-        const buffer = generateComissionProtocol(data);
-
-        res.setHeader(
-            'Content-Disposition',
-            'attachment; filename=comission_protocol.docx');
-        res.setHeader(
-            'Content-Type',
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-        res.send(buffer);
-    } catch (error) {
-        console.error('Error generating comission protocol:', error);
-        res.status(500).json({ error: 'Failed to generate comission protocol' });
+    if (!data || typeof data !== 'object') {
+      return res.status(400).json({ error: 'Invalid request body. Expected JSON object.' });
     }
-})
+
+    const maybeBuffer = generateComissionProtocol(data);
+
+    // если генератор вернул Promise (на будущее)
+    if (maybeBuffer && typeof maybeBuffer.then === 'function') {
+      return maybeBuffer
+        .then((buffer) => {
+          if (!Buffer.isBuffer(buffer)) {
+            return res.status(500).json({ error: 'Generator returned non-buffer result.' });
+          }
+
+          res.setHeader(
+            'Content-Disposition',
+            'attachment; filename="comission_protocol.docx"'
+          );
+          res.setHeader(
+            'Content-Type',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+          );
+
+          return res.status(200).end(buffer);
+        })
+        .catch((error) => {
+          console.error('Error generating comission protocol:', error);
+          if (!res.headersSent) {
+            return res.status(500).json({ error: 'Failed to generate comission protocol' });
+          }
+        });
+    }
+
+    const buffer = maybeBuffer;
+
+    if (!Buffer.isBuffer(buffer)) {
+      return res.status(500).json({ error: 'Generator returned non-buffer result.' });
+    }
+
+    res.setHeader(
+      'Content-Disposition',
+      'attachment; filename="comission_protocol.docx"'
+    );
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    );
+
+    return res.status(200).end(buffer);
+  } catch (error) {
+    console.error('Error generating comission protocol:', error);
+    if (!res.headersSent) {
+      return res.status(500).json({ error: 'Failed to generate comission protocol' });
+    }
+  }
+});
+
 
 app.post('/api/generate-accepted-protocol', (req, res) => {
   try {
