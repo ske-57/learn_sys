@@ -10,6 +10,7 @@ const cors = require('cors');
 const http = require('http');
 const { generateAcceptedProtocol } = require('./generateAcceptedProtocol');
 const { generateVisitingProtocol } = require('./generateVisitingProtocol');
+const { calculateScheduleByLessons } = require('./utils/sheudleCalculator');
 
 const PORT = process.env.PORT || '443';
 const app = express();
@@ -148,23 +149,38 @@ app.post('/api/generate-accepted-protocol', (req, res) => {
 
 
 app.post('/api/generate-visiting-protocol', async (req, res) => {
-    try {
-        const data = req.body;
+  try {
+    const data = req.body ?? {};
 
-        const buffer = generateVisitingProtocol(data);
-
-        res.setHeader(
-            'Content-Disposition',
-            'attachment; filename=visiting_protocol.docx');
-        res.setHeader(
-            'Content-Type',
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-        res.send(buffer);
-    } catch (error) {
-        console.error('Error generating visiting protocol:', error);
-        res.status(500).json({ error: 'Failed to generate visiting protocol' });
+    if (!data || typeof data !== 'object') {
+      return res.status(400).json({ error: 'Invalid request body. Expected JSON object.' });
     }
-})
+
+    // ✅ считаем расписание (8ч/день, пропуск праздников)
+    const { schedule, end_date } = await calculateScheduleByLessons(data.start_date, data.lessons);
+
+    data.schedule = schedule;
+    data.end_date = data.end_date || end_date; // если вдруг уже передали — не перетираем
+
+    // при желании можно ещё и start/end по total hours посчитать:
+    // data.end_date = data.end_date || await calculateEndDateByHours(data.start_date, data.hours);
+
+    const buffer = generateVisitingProtocol(data);
+
+    res.setHeader('Content-Disposition', 'attachment; filename="visiting_protocol.docx"');
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    );
+
+    return res.status(200).end(buffer);
+  } catch (error) {
+    console.error('Error generating visiting protocol:', error);
+    return res.status(500).json({ error: 'Failed to generate visiting protocol' });
+  }
+});
+
+
 
 const server = http.createServer(app);
 

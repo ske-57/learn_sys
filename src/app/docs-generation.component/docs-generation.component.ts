@@ -36,9 +36,7 @@ export class DocsGenerationComponent implements OnInit {
   ]
   groups: GroupWithDetails[] = [];
   organizations: { id: number, name: string }[] = [];
-  params: any = {
-
-  }
+  params: any = {}
 
   ngOnInit(): void {
     this.organizationsService.getOrganizations().subscribe({
@@ -61,55 +59,81 @@ export class DocsGenerationComponent implements OnInit {
   }
 
   generateVisitProtocol(): void {
-    if (!this.validateParams()) return
-    // Логика генерации отчета
-    console.log('Generating visit with params:', this.params);
-    const groupId = this.params.group;
+  if (!this.validateParams()) return;
 
-    this.groupsService.getGroupInfo(groupId).subscribe({
-      next: (group) => {
-        this.groupInfo = group;
+  const groupId = Number(this.params.group);
 
-        forkJoin({
-          members: this.groupsService.getGroupMembers(groupId),
-          course: this.coursesService.getCourseById(this.groupInfo.course_id),
-        }).subscribe({
-          next: ({ members, course }) => {
-            this.groupMembers = members;
-            this.courseInfo = course;
+  this.groupsService.getGroupInfo(groupId).pipe(
+    tap((group) => (this.groupInfo = group)),
 
-            const data = this.getAllData();
+    switchMap((group) =>
+      forkJoin({
+        members: this.groupsService.getGroupMembers(groupId),
+        course: this.coursesService.getCourseById(group.course_id),
+      })
+    ),
 
-            console.log("data intro = ", data);
+    tap(({ members, course }) => {
+      this.groupMembers = members;
+      this.courseInfo = course;
+    }),
 
-            this.makeProtocolService.makeVisitProtocol(data).subscribe({
-              next: (blob) => {
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'protocol_visit_result.docx';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(url);
-              },
-              error: (err) => {
-                console.error('Ошибка при скачивании протокола', err);
-              }
-            });
-          },
-          error: (error) => {
-            console.error('Ошибка при загрузке участников или курса', error);
-          },
-        });
-      },
-      error: (error) => {
-        console.error('Ошибка при загрузке данных группы', error);
-      },
+    map(({ members, course }) => {
+      // ✅ payload с ключами как в DOCX, а schedule посчитает бэк по lessons + start_date
+      return {
+        moisei_name: this.params.moiseiName ?? '',
 
+        group_id: this.groupInfo?.id ?? -1,
+        course_name: course?.name ?? '',
+        hours: course?.hours ?? '',
+
+        start_date: this.groupInfo?.start_date ?? '',
+        // end_date НЕ отправляем — бэк посчитает сам
+        // end_date: '',
+
+        employee: (members ?? []).map((m: any) => {
+          const fio =
+            (m?.name || m?.last_name || m?.middle_name)
+              ? {
+                  name: m?.name ?? '',
+                  last_name: m?.last_name ?? '',
+                  middle_name: m?.middle_name ?? '',
+                }
+              : this.splitFio(m?.fullName ?? m?.fio ?? '');
+
+          return {
+            ...fio,
+            organization_name: m?.organization_name ?? m?.organization ?? '',
+          };
+        }),
+
+        // ✅ отправляем темы и часы — бэк разложит это по датам (8 часов/день, минус праздники)
+        lessons: (course?.lessons ?? []).map((l: any) => ({
+          name: l?.name ?? '',
+          hours: Number(l?.hours ?? 0),
+        })),
+      };
+    }),
+
+    switchMap((payload) => this.makeProtocolService.makeVisitProtocol(payload)),
+    take(1),
+
+    catchError((err) => {
+      console.error('Ошибка при генерации/скачивании visit протокола', err);
+      alert('Не удалось сформировать протокол посещаемости.');
+      return EMPTY;
     })
-
-  }
+  ).subscribe((blob) => {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'protocol_visit_result.docx';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  });
+}
 
   generateAcceptedProtocol(): void {
     if (!this.validateParams()) return;
