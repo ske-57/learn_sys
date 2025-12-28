@@ -52,7 +52,7 @@ async function calculateScheduleByLessons(startDateStr, lessons) {
     return { schedule: [], end_date: null };
   }
 
-  // пропускаем уроки с нулевыми/отрицательными часами, чтобы не зациклиться
+  // пропускаем уроки с нулевыми/отрицательными часами
   const safeLessons = lessons
     .map((l) => ({ name: l?.name ?? '', hours: Number(l?.hours ?? 0) }))
     .filter((l) => l.hours > 0);
@@ -71,6 +71,7 @@ async function calculateScheduleByLessons(startDateStr, lessons) {
 
   const MAX_CHUNK_DAYS = 366;
 
+  // Iterate days and fill each work day with up to WORK_DAY_HOURS (8) from one or more lessons
   while (lessonIdx < safeLessons.length) {
     const chunkStart = new Date(cursor);
     const chunkEnd = new Date(chunkStart);
@@ -90,28 +91,36 @@ async function calculateScheduleByLessons(startDateStr, lessons) {
       const day = new Date(chunkStart);
       day.setDate(day.getDate() + i);
 
-      const take = Math.min(WORK_DAY_HOURS, remainingLessonHours);
+      let dayRemaining = WORK_DAY_HOURS;
 
-      schedule.push({
-        lesson_date: toYMD(day),
-        lesson_hours: take,
-        course_lesson_name: safeLessons[lessonIdx].name,
-      });
+      // Fill the day with parts of lessons until day capacity is used or no lessons left
+      while (dayRemaining > 0 && lessonIdx < safeLessons.length) {
+        const take = Math.min(dayRemaining, remainingLessonHours);
 
-      lastTrainingDate = day;
-      remainingLessonHours -= take;
+        // push an entry for this lesson on this date
+        schedule.push({
+          lesson_date: toYMD(day),
+          lesson_hours: take,
+          course_lesson_name: safeLessons[lessonIdx].name,
+        });
 
-      if (remainingLessonHours <= 0) {
-        lessonIdx += 1;
-        remainingLessonHours = safeLessons[lessonIdx]?.hours ?? 0;
+        lastTrainingDate = day;
+        dayRemaining -= take;
+        remainingLessonHours -= take;
+
+        if (remainingLessonHours <= 0) {
+          lessonIdx += 1;
+          remainingLessonHours = safeLessons[lessonIdx]?.hours ?? 0;
+        }
       }
     }
 
+    // advance cursor after processed chunk
     cursor = new Date(chunkEnd);
     cursor.setDate(cursor.getDate() + 1);
   }
 
-  // end_date = следующий день после последнего занятия (как ты делал)
+  // end_date = следующий день после последнего занятия
   const endDate = lastTrainingDate ? new Date(lastTrainingDate) : null;
   if (endDate) endDate.setDate(endDate.getDate() + 1);
 

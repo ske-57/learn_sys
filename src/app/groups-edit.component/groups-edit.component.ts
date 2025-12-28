@@ -77,7 +77,7 @@ export class GroupsEditComponent implements OnInit {
       }
     });
 
-    // Load organizations for manual creation
+
     this.employeesService.getOrganizations().subscribe({
       next: (list) => {
         this.organizations = list;
@@ -87,7 +87,7 @@ export class GroupsEditComponent implements OnInit {
       }
     });
 
-    // Load courses to allow selecting by name
+
     this.coursesService.getCourses().subscribe({
       next: (list) => this.courses = list,
       error: (err) => console.error('Failed to load courses', err)
@@ -243,8 +243,8 @@ export class GroupsEditComponent implements OnInit {
 
     this.groupsService.updateGroup(this.groupId, payload).subscribe({
       next: (updated) => {
-        alert('Группа сохранена');
         this.navigateToGroups();
+        alert('Группа сохранёна');
       },
       error: (err) => {
         console.error('Failed to update group', err);

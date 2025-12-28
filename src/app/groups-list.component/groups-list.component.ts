@@ -38,7 +38,6 @@ export class GroupsListComponent implements OnInit {
     this.loadCourses();
   }
 
-  // загрузка групп
   private loadGroups(): void {
     this.groupsService.getGroups().subscribe({
       next: (data: GroupWithDetails[]) => {
@@ -50,7 +49,6 @@ export class GroupsListComponent implements OnInit {
     });
   }
 
-  // загрузка курсов для select
   private loadCourses(): void {
     this.coursesService.getCourses().subscribe({
       next: (data: Course[]) => {
@@ -62,19 +60,16 @@ export class GroupsListComponent implements OnInit {
     });
   }
 
-  // открыть форму создания
   onCreate(): void {
     this.isCreating = true;
     this.newGroup = this.clearGroup();
   }
 
-  // закрыть форму без сохранения
   onCancelCreate(): void {
     this.isCreating = false;
     this.newGroup = this.clearGroup();
   }
 
-  // сохранить новую группу
   onSave(form: NgForm): void {
     if (form.invalid) {
       alert('Вам нужно обяхательно ввести номер группы, курс обучения и дату начала или конца');
@@ -108,10 +103,8 @@ export class GroupsListComponent implements OnInit {
     };
   }
 
-  // // страница редактирования/добавления сотрудников в группу
   editGroup(groupId: number): void {
     this.router.navigate([`/groups/${groupId}/edit`]);
-    // на этой странице уже можно делать управление составом группы
   }
 
   navigateToCourses(): void {
