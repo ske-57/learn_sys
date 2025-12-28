@@ -23,6 +23,7 @@ export class GroupsListComponent implements OnInit {
   private coursesService = inject(CoursesService);
 
   groups: GroupWithDetails[] = [];
+  displayedGroups: GroupWithDetails[] = [];
   courses: Course[] = [];
 
   isCreating = false;
@@ -42,11 +43,23 @@ export class GroupsListComponent implements OnInit {
     this.groupsService.getGroups().subscribe({
       next: (data: GroupWithDetails[]) => {
         this.groups = data;
+        this.displayedGroups = data;
       },
       error: (error) => {
         console.error('Ошибка при загрузке групп', error);
       },
     });
+  }
+
+  applyFilter(): void {
+    const q = String(this.filters.search ?? '').trim().toLowerCase();
+    if (!q) {
+      this.displayedGroups = this.groups;
+      return;
+    }
+
+    // match by group id (number) or string representation
+    this.displayedGroups = this.groups.filter(g => String(g.id).toLowerCase().includes(q));
   }
 
   private loadCourses(): void {

@@ -53,13 +53,14 @@
       </button>
     </header>
 
-    <!-- Поиск -->
+    <!-- Поиск по номеру группы -->
     <div class="toolbar">
       <label class="search search--wide">
         <input
           type="text"
-          placeholder="Поиск по названию"
+          placeholder="Поиск по номеру группы"
           [(ngModel)]="filters.search"
+          (input)="applyFilter()"
         />
         <span class="s-ico">
           <svg viewBox="0 0 24 24">
@@ -158,7 +159,7 @@
         <div></div>
       </div>
 
-      <div class="tr" *ngFor="let g of groups">
+      <div class="tr" *ngFor="let g of displayedGroups">
         <!-- предполагаю, что теперь в GroupWithDetails есть поле number -->
         <div class="g-id">{{ g.id }}</div>
         <div class="g-course">{{ g.course_name }}</div>
