@@ -131,7 +131,7 @@ export class CourseEditComponent implements OnInit, OnDestroy {
     body[field] = (this.course as any)[field] ?? null;
     this.coursesService.updateCourse(this.courseId, body).subscribe({
       next: (updated) => {
-        console.log(`${field} updated`);
+        // console.log(`${field} updated`);
         this.fieldSaving[field] = false;
       },
       error: (err) => {

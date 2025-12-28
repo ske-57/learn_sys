@@ -47,7 +47,12 @@ export class GroupsEditComponent implements OnInit {
     name: '',
     last_name: '',
     middle_name: '',
+    snils: null,
+    birth_date: null,
     organization_id: null,
+    grade: null,
+    phone: null,
+    email: null,
     education: '',
     is_active: true
   }
@@ -130,8 +135,29 @@ export class GroupsEditComponent implements OnInit {
   }
 
   saveMemberManual(): void {
+    // Validate required fields like employee-create
+    if (!this.manualMember.name || !this.manualMember.last_name || !this.manualMember.organization_id) {
+      alert('Заполните обязательные поля: имя, фамилия, организация');
+      return;
+    }
+
+    // Normalize/trim optional values
+    const payload = {
+      name: String(this.manualMember.name).trim(),
+      last_name: String(this.manualMember.last_name).trim(),
+      middle_name: this.manualMember.middle_name ? String(this.manualMember.middle_name).trim() : null,
+      snils: this.manualMember.snils ? String(this.manualMember.snils).trim() : null,
+      birth_date: this.manualMember.birth_date || null,
+      organization_id: this.manualMember.organization_id,
+      grade: this.manualMember.grade ?? null,
+      phone: this.manualMember.phone ? String(this.manualMember.phone).trim() : null,
+      email: this.manualMember.email ? String(this.manualMember.email).trim() : null,
+      education: this.manualMember.education ? String(this.manualMember.education).trim() : '',
+      is_active: true
+    };
+
     // Create employee then add to group
-    this.employeesService.createEmployee(this.manualMember).subscribe({
+    this.employeesService.createEmployee(payload).subscribe({
       next: (created: any) => {
         const createdId = created?.id;
         if (!createdId) {
@@ -141,7 +167,7 @@ export class GroupsEditComponent implements OnInit {
         this.groupsService.addEmployeeToGroup(this.groupId, createdId).subscribe({
           next: () => {
             this.showAddMemberManual = false;
-            this.manualMember = { name: '', last_name: '', middle_name: '', organization_id: null, education: '', is_active: true };
+            this.manualMember = { name: '', last_name: '', middle_name: '', snils: null, birth_date: null, organization_id: null, grade: null, phone: null, email: null, education: '', is_active: true };
             this.getMembers();
           },
           error: (err) => {

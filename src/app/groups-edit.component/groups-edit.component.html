@@ -177,11 +177,40 @@
           <input class="field-input" [(ngModel)]="manualMember.last_name" />
         </div>
         <div class="field">
+          <label class="field-label">СНИЛС</label>
+          <input class="field-input" [(ngModel)]="manualMember.snils" />
+        </div>
+        <div class="field">
           <label class="field-label">Организация *</label>
-          <select class="field-input" [(ngModel)]="manualMember.organization_id">
+          <select class="field-input" [(ngModel)]="manualMember.organization_id" (focus)="loadOrganizations()">
             <option [ngValue]="null" disabled>Выберите организацию</option>
             <option *ngFor="let o of organizations" [ngValue]="o.id">{{ o.name }}</option>
           </select>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Должность</label>
+          <input class="field-input" [(ngModel)]="manualMember.grade" />
+        </div>
+
+        <div class="field">
+          <label class="field-label">Дата рождения</label>
+          <input class="field-input" type="date" [(ngModel)]="manualMember.birth_date" />
+        </div>
+
+        <div class="field">
+          <label class="field-label">Телефон</label>
+          <input class="field-input" [(ngModel)]="manualMember.phone" />
+        </div>
+
+        <div class="field">
+          <label class="field-label">E-mail</label>
+          <input class="field-input" type="email" [(ngModel)]="manualMember.email" />
+        </div>
+
+        <div class="field">
+          <label class="field-label">Образование</label>
+          <input class="field-input" [(ngModel)]="manualMember.education" />
         </div>
 
         <div class="form-actions-member">
