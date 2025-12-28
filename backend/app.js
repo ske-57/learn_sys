@@ -185,6 +185,8 @@ app.post('/api/generate-visiting-protocol', async (req, res) => {
 const server = http.createServer(app);
 
 
-server.listen(PORT, () => console.log(`Listening PORT: ${PORT}`));
+// server.listen(PORT, () => console.log(`Listening PORT: ${PORT}`));
+
+server.listen(8080, '127.0.0.1');
 
 console.log("Starting....");
