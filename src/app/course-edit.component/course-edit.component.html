@@ -47,6 +47,29 @@
       </div>
     </header>
 
+    <!-- Верхние поля курса: Оценка и Заключение -->
+    <div class="filters-row course-top-fields">
+      <div class="field field--with-action">
+        <label class="field-label">Оценка</label>
+        <div class="field-row">
+          <input class="field-input" type="text" [(ngModel)]="course.mark" />
+          <button class="btn ghost btn-small" type="button" (click)="saveField('mark')" [disabled]="fieldSaving.mark">
+            {{ fieldSaving.mark ? 'Сохранение...' : 'Сохранить' }}
+          </button>
+        </div>
+      </div>
+
+      <div class="field field--with-action">
+        <label class="field-label">Заключение</label>
+        <div class="field-row">
+          <input class="field-input" type="text" [(ngModel)]="course.conclusion" />
+          <button class="btn ghost btn-small" type="button" (click)="saveField('conclusion')" [disabled]="fieldSaving.conclusion">
+            {{ fieldSaving.conclusion ? 'Сохранение...' : 'Сохранить' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Таблица -->
     <div class="table table-courses">
       <div class="tr head">

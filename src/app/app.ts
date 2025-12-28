@@ -14,7 +14,7 @@ export class App implements OnInit {
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.http.get('https://d5dtikhpg3nokckhah7v.zj2i1qoy.apigw.yandexcloud.net/health')
+    this.http.get('https://158.160.95.86.sslip.io/health')
       .subscribe({ next: () => {}, error: () => {} });
   }
 }

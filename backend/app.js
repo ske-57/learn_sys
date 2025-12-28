@@ -187,6 +187,6 @@ const server = http.createServer(app);
 
 // server.listen(PORT, () => console.log(`Listening PORT: ${PORT}`));
 
-server.listen(8080, '127.0.0.1');
+server.listen(8080, '127.0.0.1', () => console.log('Listening on 8080'));
 
 console.log("Starting....");

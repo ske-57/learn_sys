@@ -121,13 +121,49 @@ export class CourseEditComponent implements OnInit, OnDestroy {
     });
   }
 
+  // track saving state for individual fields
+  fieldSaving: { mark: boolean; conclusion: boolean } = { mark: false, conclusion: false };
+
+  saveField(field: 'mark' | 'conclusion'): void {
+    if (this.courseId === -1) return;
+    this.fieldSaving[field] = true;
+    const body: any = {};
+    body[field] = (this.course as any)[field] ?? null;
+    this.coursesService.updateCourse(this.courseId, body).subscribe({
+      next: (updated) => {
+        console.log(`${field} updated`);
+        this.fieldSaving[field] = false;
+      },
+      error: (err) => {
+        console.error(`Failed to update ${field}`, err);
+        this.fieldSaving[field] = false;
+        alert(`Не удалось сохранить ${field}`);
+      }
+    });
+  }
+
   cancelAdd(): void {
     this.toggleAddLesson();
   }
 
-  // Can be deleted
   saveAll(): void {
-    this.navigateToCourses();
+    if (this.courseId === -1) { this.navigateToCourses(); return; }
+
+    const payload: any = {
+      mark: this.course.mark ?? null,
+      conclusion: this.course.conclusion ?? null,
+    };
+
+    this.coursesService.updateCourse(this.courseId, payload).subscribe({
+      next: (updated) => {
+        alert('Курс сохранён');
+        this.navigateToCourses();
+      },
+      error: (err) => {
+        console.error('Failed to update course', err);
+        alert('Не удалось сохранить курс');
+      }
+    });
   }
 
   navigateToEmployees(): void {

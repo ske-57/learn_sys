@@ -84,11 +84,6 @@
                 <div class="fio">{{ e.last_name }} {{ e.name }} {{ e.middle_name }}</div>
                 <div class="org">{{ e.organization_name }}</div>
                 <div class="actions">
-                    <button class="icon-btn" title="Редактировать">
-                        <svg viewBox="0 0 24 24">
-                            <use href="#pencil"></use>
-                        </svg>
-                    </button>
                     <button class="icon-btn" title="Удалить" (click)="deactivateEmployee(e.id)">
                         <svg viewBox="0 0 24 24">
                             <use href="#trash"></use>

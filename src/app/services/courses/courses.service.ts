@@ -29,6 +29,13 @@ export class CoursesService {
     return this.http.get<Course>(`${this.baseApi}/courses/${course_id}`);
   }
 
+  /**
+   * Partial update of a course (mark/conclusion etc.)
+   */
+  updateCourse(course_id: number, body: Partial<Course>): Observable<Course> {
+    return this.http.patch<Course>(`${this.baseApi}/courses/${course_id}`, body);
+  }
+
   // Only java endpoint
   getCourseLessonsByCourseId(course_id: number): Observable<Lesson[]> {
     return this.http.get<Lesson[]>(`${this.baseApi}/courses/${course_id}/lessons`);

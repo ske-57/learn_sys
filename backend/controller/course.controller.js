@@ -167,6 +167,44 @@ class CourseController {
             return res.status(500).json({ error: 'Internal server error' })
         }
     }
+
+    // Partial update of course (supports mark, conclusion and other fields)
+    async updateCourse(req, res) {
+        try {
+            const { id } = req.params
+            const payload = req.body || {}
+
+            if (!id || Number(id) <= 0) {
+                return res.status(400).json({ error: 'Invalid course id' })
+            }
+
+            // Accept only allowed fields to avoid accidental updates
+            const allowed = ['mark', 'conclusion', 'name', 'description', 'hours']
+            const keys = Object.keys(payload).filter(k => allowed.includes(k))
+
+            if (keys.length === 0) {
+                return res.status(400).json({ error: 'No updatable fields provided' })
+            }
+
+            // Build dynamic SET clause
+            const setClauses = keys.map((k, idx) => `${k} = $${idx + 1}`)
+            const values = keys.map(k => payload[k])
+            values.push(id) // for WHERE
+
+            const queryText = `UPDATE courses SET ${setClauses.join(', ')} WHERE id = $${values.length} RETURNING *`
+
+            const result = await db.query(queryText, values)
+
+            if (result.rows.length === 0) {
+                return res.status(404).json({ error: 'Course not found' })
+            }
+
+            return res.status(200).json(result.rows[0])
+        } catch (err) {
+            console.error('updateCourse error', err)
+            return res.status(500).json({ error: 'Internal server error' })
+        }
+    }
 }
 
 module.exports = new CourseController()
