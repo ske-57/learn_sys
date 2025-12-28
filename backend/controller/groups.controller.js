@@ -216,6 +216,87 @@ class GroupsController {
         }
     }
 
+    // Partial update of a group: supports course_id, start_date, end_date
+    async updateGroup(req, res) {
+        try {
+            const { groupId } = req.params;
+            const payload = req.body || {};
+
+            if (!groupId || Number(groupId) <= 0) {
+                return res.status(400).json({ error: 'Invalid group id' });
+            }
+
+            // Allow only these fields
+            const allowed = ['course_id', 'start_date', 'end_date'];
+            const keys = Object.keys(payload).filter(k => allowed.includes(k));
+
+            if (keys.length === 0) {
+                return res.status(400).json({ error: 'No updatable fields provided' });
+            }
+
+            // If course_id provided, verify course exists
+            if (payload.course_id) {
+                const courseCheck = await db.query(`SELECT id FROM courses WHERE id = $1`, [payload.course_id]);
+                if (courseCheck.rows.length === 0) {
+                    return res.status(400).json({ error: 'Invalid course_id' });
+                }
+            }
+
+            // If start_date or course_id changed and end_date not provided, calculate new end_date by course hours
+            if ((payload.start_date || payload.course_id) && !('end_date' in payload)) {
+                // need course_id (either payload or existing group)
+                let courseIdToUse = payload.course_id;
+                if (!courseIdToUse) {
+                    const current = await db.query(`SELECT course_id FROM groups WHERE id = $1`, [groupId]);
+                    if (current.rows.length === 0) {
+                        return res.status(404).json({ error: 'Group not found' });
+                    }
+                    courseIdToUse = current.rows[0].course_id;
+                }
+
+                // get total hours for course
+                const courseHoursResult = await db.query(
+                    `SELECT SUM(cl.hours) as hours FROM course_lessons cl WHERE cl.course_id = $1`,
+                    [courseIdToUse]
+                );
+
+                const hours = Number(courseHoursResult.rows[0]?.hours);
+                if (!hours || hours <= 0) {
+                    return res.status(400).json({ error: 'Course hours must be greater than 0 to calculate end_date' });
+                }
+
+                const startDateToUse = payload.start_date || (await db.query(`SELECT start_date FROM groups WHERE id = $1`, [groupId])).rows[0].start_date;
+
+                try {
+                    const newEnd = await calculateEndDateByHours(startDateToUse, hours);
+                    payload.end_date = newEnd;
+                    if (!keys.includes('end_date')) keys.push('end_date');
+                } catch (err) {
+                    console.error('Error calculating end_date', err);
+                    return res.status(500).json({ error: 'Cannot calculate end_date' });
+                }
+            }
+
+            // Build dynamic SET clause
+            const setClauses = keys.map((k, idx) => `${k} = $${idx + 1}`);
+            const values = keys.map(k => payload[k]);
+            values.push(groupId);
+
+            const queryText = `UPDATE groups SET ${setClauses.join(', ')} WHERE id = $${values.length} RETURNING *`;
+
+            const result = await db.query(queryText, values);
+
+            if (result.rows.length === 0) {
+                return res.status(404).json({ error: 'Group not found' });
+            }
+
+            return res.status(200).json(result.rows[0]);
+        } catch (err) {
+            console.error('updateGroup error', err);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+    }
+
     async deleteGroupMember(req, res) {
         try {
             const { groupId, employeeId } = req.params

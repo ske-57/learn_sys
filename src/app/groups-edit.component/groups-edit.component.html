@@ -50,6 +50,43 @@
       </div>
     </header>
 
+    <!-- Верхние поля группы: Курс, Дата начала, Дата окончания -->
+    <div class="filters-row course-top-fields">
+      <div class="field field--with-action">
+        <label class="field-label">Курс</label>
+        <div class="field-row">
+          <select class="field-input" [(ngModel)]="group.course_id" *ngIf="group">
+            <option [ngValue]="null" disabled>Выберите курс</option>
+            <option *ngFor="let c of courses" [ngValue]="c.id">{{ c.name }}</option>
+          </select>
+          <button class="btn ghost btn-small" type="button" (click)="saveField('course_id')" [disabled]="fieldSaving.course_id">
+            {{ fieldSaving.course_id ? 'Сохранение...' : 'Сохранить' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- <div class="field field--with-action">
+        <label class="field-label">Дата начала</label>
+        <div class="field-row">
+          <input class="field-input" type="date" [(ngModel)]="group.start_date" />
+          <button class="btn ghost btn-small" type="button" (click)="saveField('start_date')" [disabled]="fieldSaving.start_date">
+            {{ fieldSaving.start_date ? 'Сохранение...' : 'Сохранить' }}
+          </button>
+        </div>
+      </div>
+
+      <div class="field field--with-action">
+        <label class="field-label">Дата окончания</label>
+        <div class="field-row">
+          <input class="field-input" type="date" [(ngModel)]="group.end_date" />
+          <button class="btn ghost btn-small" type="button" (click)="saveField('end_date')" [disabled]="fieldSaving.end_date">
+            {{ fieldSaving.end_date ? 'Сохранение...' : 'Сохранить' }}
+          </button>
+        </div>
+      </div> -->
+
+    </div>
+
     <!-- Таблица сотрудников в группе -->
     <div class="table table-members">
       <div class="tr head">

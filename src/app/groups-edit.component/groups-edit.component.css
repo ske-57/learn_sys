@@ -357,6 +357,26 @@
   gap: 12px;
 }
 
+/* field variant with inline action button */
+.field--with-action .field-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.field--with-action .field-row .field-input {
+  flex: 1 1 auto;
+}
+
+/* small action button */
+.btn-small {
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 10px;
+  min-height: 34px;
+  align-self: stretch;
+}
+
 /* действия для всей группы */
 .group-actions {
   margin-top: 18px;

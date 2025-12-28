@@ -36,6 +36,13 @@ export class GroupsService {
     return this.http.get<Group>(`${this.baseApi}/groups/${group_id}`);
   }
 
+  /**
+   * Partial update of a group
+   */
+  updateGroup(group_id: number, body: Partial<Group>): Observable<Group> {
+    return this.http.patch<Group>(`${this.baseApi}/groups/${group_id}`, body);
+  }
+
   deleteGroupMember(group_id: number, employee_id: number): Observable<any> {
     return this.http.delete(`${this.baseApi}/groups/${group_id}/members/${employee_id}`);
   }

@@ -7,6 +7,7 @@ import { EmployeesService } from '../services/employees/employees.service';
 import { EmployeeSimpleDTO } from '../types/Employee/Employee-simpleDTO';
 import { GroupMember } from '../types/Groups/Group-members-type';
 import { GroupsService } from '../services/groups/groups.service';
+import { CoursesService } from '../services/courses/courses.service';
 
 @Component({
   selector: 'app-groups-edit.component',
@@ -20,12 +21,19 @@ export class GroupsEditComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private employeesService = inject(EmployeesService);
   private groupsService = inject(GroupsService);
+  private coursesService = inject(CoursesService);
   groupId: number = -1;
+  group: any = null;
   showAddMember: boolean = false;
   showAddMemberManual: boolean = false;
   group_members: GroupMember[] = [];
   employees: Employee[] = [];
   organizations: {id: number, name: string}[] = [];
+  courses: any[] = [];
+
+  // saving states for group fields
+  fieldSaving: { course_id: boolean; start_date: boolean; end_date: boolean } = { course_id: false, start_date: false, end_date: false };
+
   newMember: Employee = {
     id: null!,
     name: '',
@@ -48,10 +56,12 @@ export class GroupsEditComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       const stringId = params.get('id');
       if (stringId != null) this.groupId = +stringId;
-      // Load group data by id if needed
+      // Load group data by id
+      if (this.groupId && this.groupId > 0) {
+        this.loadGroupInfo(this.groupId);
+        this.getMembers();
+      }
     });
-
-    this.getMembers();
 
     this.employeesService.getEmployees().subscribe({
       next: (list) => {
@@ -70,6 +80,12 @@ export class GroupsEditComponent implements OnInit {
       error: (err) => {
         console.error('Failed to load organizations', err);
       }
+    });
+
+    // Load courses to allow selecting by name
+    this.coursesService.getCourses().subscribe({
+      next: (list) => this.courses = list,
+      error: (err) => console.error('Failed to load courses', err)
     });
   }
 
@@ -154,13 +170,61 @@ export class GroupsEditComponent implements OnInit {
         });
   }
 
+  loadGroupInfo(groupId: number): void {
+    this.groupsService.getGroupInfo(groupId).subscribe({
+      next: (data) => {
+        this.group = data;
+      },
+      error: (err) => {
+        console.error('Failed to load group info', err);
+      }
+    });
+  }
+
   cancelAdd(): void {
     this.showAddMember = false;
   }
 
+  saveField(field: 'course_id' | 'start_date' | 'end_date'): void {
+    if (this.groupId === -1 || !this.group) return;
+    this.fieldSaving[field] = true as any;
+    const body: any = {};
+    body[field] = (this.group as any)[field] ?? null;
+    this.groupsService.updateGroup(this.groupId, body).subscribe({
+      next: (updated) => {
+        console.log(`${field} updated`);
+        this.group = updated;
+        this.fieldSaving[field] = false as any;
+      },
+      error: (err) => {
+        console.error(`Failed to update ${field}`, err);
+        this.fieldSaving[field] = false as any;
+        alert(`Не удалось сохранить ${field}`);
+      }
+    });
+  }
+
   saveAll(): void {
     // Logic to save all changes
-    this.navigateToGroups();
+    // Save current group fields (course_id, start_date, end_date) in one call
+    if (!this.group || this.groupId === -1) { this.navigateToGroups(); return; }
+
+    const payload: any = {
+      course_id: this.group.course_id ?? null,
+      start_date: this.group.start_date ?? null,
+      end_date: this.group.end_date ?? null,
+    };
+
+    this.groupsService.updateGroup(this.groupId, payload).subscribe({
+      next: (updated) => {
+        alert('Группа сохранена');
+        this.navigateToGroups();
+      },
+      error: (err) => {
+        console.error('Failed to update group', err);
+        alert('Не удалось сохранить группу');
+      }
+    });
   }
 
   navigateToEmployees(): void {
