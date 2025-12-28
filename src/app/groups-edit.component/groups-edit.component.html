@@ -182,7 +182,7 @@
         </div>
         <div class="field">
           <label class="field-label">Организация *</label>
-          <select class="field-input" [(ngModel)]="manualMember.organization_id" (focus)="loadOrganizations()">
+          <select class="field-input" [(ngModel)]="manualMember.organization_id">
             <option [ngValue]="null" disabled>Выберите организацию</option>
             <option *ngFor="let o of organizations" [ngValue]="o.id">{{ o.name }}</option>
           </select>
