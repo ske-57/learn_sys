@@ -15,6 +15,8 @@ import { OrganizationsService } from '../services/organizations/organizations.se
 export class EmployeListComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   employees: EmployeeWithOrg[] = [];
+  displayedEmployees: EmployeeWithOrg[] = [];
+  filterLastName: string = '';
   private employeService = inject(EmployeesService);
   private organizationsService = inject(OrganizationsService);
 
@@ -86,6 +88,7 @@ export class EmployeListComponent implements OnInit, OnDestroy {
     this.employeService.getEmployees().subscribe({
       next: (data) => {
         this.employees = data;
+        this.displayedEmployees = data;
       },
       error: (error) => {
         console.error(error);
@@ -142,5 +145,16 @@ export class EmployeListComponent implements OnInit, OnDestroy {
         is_active: false
       }
     ]
+    this.displayedEmployees = this.employees;
+  }
+
+  applyFilter(): void {
+    const q = String(this.filterLastName ?? '').trim().toLowerCase();
+    if (!q) {
+      this.displayedEmployees = this.employees;
+      return;
+    }
+
+    this.displayedEmployees = this.employees.filter(e => (e.last_name ?? '').toString().toLowerCase().includes(q));
   }
 }

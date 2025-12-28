@@ -58,9 +58,10 @@
       <label class="search">
         <input
           type="text"
-          placeholder="Поиск по названию"/>
-          <!-- (ngModelChange)="onSearchChange($event)" -->
-        <!-- /> -->
+          placeholder="Поиск по названию"
+          [(ngModel)]="search"
+          (input)="applyFilter()"
+        />
         <span class="s-ico">
           <svg viewBox="0 0 24 24">
             <use href="#search"></use>
@@ -154,7 +155,7 @@
         <div class="col-actions">Действия</div>
       </div>
 
-      <div class="tr" *ngFor="let course of courses">
+      <div class="tr" *ngFor="let course of displayedCourses">
         <div class="course-name">
           {{ course.name }}
         </div>

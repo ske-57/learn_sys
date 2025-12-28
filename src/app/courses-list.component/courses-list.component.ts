@@ -18,6 +18,7 @@ export class CoursesListComponent implements OnInit, OnDestroy {
   isCreating = false;
   search = '';
   courses: Course[] = [];
+  displayedCourses: Course[] = [];
 
   newCourse: {
     name: string;
@@ -40,17 +41,29 @@ export class CoursesListComponent implements OnInit, OnDestroy {
       { id: 2, name: 'Разряд сварщика', hours: 40 },
       { id: 3, name: 'Первая помощь', hours: 40 },
     ]
+    this.displayedCourses = this.courses;
 }
 
   private loadCourses(): void {
     this.coursesSerivce.getCourses().subscribe({
       next: (data) => {
         this.courses = data;
+        this.displayedCourses = data;
       },
       error: (error) => {
         console.error(error);
       }
     })
+  }
+
+  applyFilter(): void {
+    const q = String(this.search ?? '').trim().toLowerCase();
+    if (!q) {
+      this.displayedCourses = this.courses;
+      return;
+    }
+
+    this.displayedCourses = this.courses.filter(c => (c.name ?? '').toString().toLowerCase().includes(q));
   }
 
   // закрыть форму без сохранения

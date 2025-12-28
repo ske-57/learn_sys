@@ -60,10 +60,10 @@
             <button class="btn primary" (click)="navigateToEmployeeCreate()">Добавить</button>
         </header>
 
-        <!-- Поиск -->
+        <!-- Поиск по фамилии -->
         <div class="toolbar">
             <label class="search">
-                <input placeholder="Поиск по названию" />
+                <input placeholder="Поиск по фамилии" [(ngModel)]="filterLastName" (input)="applyFilter()" />
                 <span class="s-ico">
                     <svg viewBox="0 0 24 24">
                         <use href="#search"></use>
@@ -80,7 +80,7 @@
                 <div>Действия</div>
             </div>
 
-            <div class="tr" *ngFor="let e of employees">
+            <div class="tr" *ngFor="let e of displayedEmployees">
                 <div class="fio">{{ e.last_name }} {{ e.name }} {{ e.middle_name }}</div>
                 <div class="org">{{ e.organization_name }}</div>
                 <div class="actions">
