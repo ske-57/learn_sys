@@ -311,15 +311,22 @@
   border-radius: 12px;
   background: #fbfbff;
   border: 1px solid var(--stroke);
-  width: min(100%, 920px);
+  width: 100%;
+  max-width: 920px;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
+/* Ensure fields take full width inside manual form and do not overflow */
 .add-member-form.manual .field {
   width: 100%;
+  box-sizing: border-box;
 }
 
 .add-member-form.manual .field-input {
   width: 100%;
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
 .add-member-form.manual .form-actions-member {
