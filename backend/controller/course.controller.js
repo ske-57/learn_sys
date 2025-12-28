@@ -112,16 +112,16 @@ class CourseController {
 
             const inserted = result.rows[0]
 
-            // const hoursNum = Number(hours)
-            // if (!Number.isNaN(hoursNum) && hoursNum > 0) {
-            //     await db.query(
-            //         `UPDATE courses SET hours = COALESCE(hours, 0) + $1 WHERE id = $2`,
-            //         [
-            //             hoursNum,
-            //             id
-            //         ]
-            //     )
-            // }
+            const hoursNum = Number(hours)
+            if (!Number.isNaN(hoursNum) && hoursNum > 0) {
+                await db.query(
+                    `UPDATE courses SET hours = COALESCE(hours, 0) + $1 WHERE id = $2`,
+                    [
+                        hoursNum,
+                        id
+                    ]
+                )
+            }
 
             return res.status(201).json(inserted)
         } catch (err) {
