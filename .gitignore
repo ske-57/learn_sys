@@ -43,9 +43,11 @@ testem.log
 .DS_Store
 Thumbs.db
 
+# Firebase
+.firebase
+
 # Backend useless files
 /backend/node_modules
 /backend/.env
 /backend/db.origin.js
-/backend/database.sql
 
