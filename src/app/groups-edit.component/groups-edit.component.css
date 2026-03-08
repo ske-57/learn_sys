@@ -392,3 +392,48 @@
   justify-content: flex-start;
   width: min(100%, 920px);
 }
+/* организация поиск */
+.organization-search-container {
+  position: relative;
+  width: 100%;
+}
+
+.organization-search-container input {
+  width: 100%;
+}
+
+.organization-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--panel);
+  border: 1px solid var(--stroke);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 100;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.organization-option {
+  padding: 10px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--stroke);
+}
+
+.organization-option:last-child {
+  border-bottom: none;
+}
+
+.organization-option:hover {
+  background: var(--chip);
+}
+
+.selected-organization {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--muted);
+  font-style: italic;
+}

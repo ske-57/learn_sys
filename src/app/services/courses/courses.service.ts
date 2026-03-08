@@ -48,5 +48,9 @@ export class CoursesService {
   deleteLesson(course_id: number, lesson_id: number): Observable<any> {
     return this.http.delete(`${this.baseApi}/courses/${course_id}/lessons/${lesson_id}`);
   }
+
+  updateLesson(course_id: number, lesson_id: number, body: { name: string; hours: number }): Observable<Lesson> {
+    return this.http.patch<Lesson>(`${this.baseApi}/courses/${course_id}/lessons/${lesson_id}`, body);
+  }
     
 }

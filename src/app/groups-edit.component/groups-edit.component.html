@@ -165,6 +165,10 @@
 
       <div class="add-member-form manual" *ngIf="showAddMemberManual">
         <div class="field">
+          <label class="field-label">Фамилия *</label>
+          <input class="field-input" [(ngModel)]="manualMember.last_name" />
+        </div>
+        <div class="field">
           <label class="field-label">Имя *</label>
           <input class="field-input" [(ngModel)]="manualMember.name" />
         </div>
@@ -173,19 +177,34 @@
           <input class="field-input" [(ngModel)]="manualMember.middle_name" />
         </div>
         <div class="field">
-          <label class="field-label">Фамилия *</label>
-          <input class="field-input" [(ngModel)]="manualMember.last_name" />
-        </div>
-        <div class="field">
           <label class="field-label">СНИЛС</label>
           <input class="field-input" [(ngModel)]="manualMember.snils" />
         </div>
         <div class="field">
           <label class="field-label">Организация *</label>
-          <select class="field-input" [(ngModel)]="manualMember.organization_id">
-            <option [ngValue]="null" disabled>Выберите организацию</option>
-            <option *ngFor="let o of organizations" [ngValue]="o.id">{{ o.name }}</option>
-          </select>
+          <div class="organization-search-container">
+            <input
+              class="field-input"
+              type="text"
+              [(ngModel)]="organizationSearchTerm"
+              (input)="onOrganizationSearchInput()"
+              (focus)="showOrganizationDropdown = true"
+              (blur)="onOrganizationSearchBlur()"
+              placeholder="Поиск организации..."
+            />
+            <div class="organization-dropdown" *ngIf="showOrganizationDropdown && filteredOrganizations.length > 0">
+              <div
+                class="organization-option"
+                *ngFor="let o of filteredOrganizations"
+                (mousedown)="selectOrganization(o)"
+              >
+                {{ o.name }}
+              </div>
+            </div>
+            <div class="selected-organization" *ngIf="manualMember.organization_id && getSelectedOrganizationName()">
+              Выбрано: {{ getSelectedOrganizationName() }}
+            </div>
+          </div>
         </div>
 
         <div class="field">
