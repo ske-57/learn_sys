@@ -57,111 +57,6 @@ function splitFio(fullName = '') {
   };
 }
 
-function normalizeOrg(value) {
-  return String(value ?? '').trim().replace(/\s+/g, ' ').toLowerCase();
-}
-
-function stripXmlTags(xml) {
-  return String(xml ?? '').replace(/<[^>]+>/g, '');
-}
-
-function decodeXmlEntities(text) {
-  return String(text ?? '')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'");
-}
-
-function getOrganizationCell(rowXml) {
-  const cells = rowXml.match(/<w:tc>[\s\S]*?<\/w:tc>/g) || [];
-  return cells.find((cell) => cell.includes('<w:tcW w:w="2379" w:type="dxa"/>')) || null;
-}
-
-function getFioCell(rowXml) {
-  const cells = rowXml.match(/<w:tc>[\s\S]*?<\/w:tc>/g) || [];
-  return cells.find((cell) => cell.includes('<w:tcW w:w="2918" w:type="dxa"/>')) || null;
-}
-
-function getTextFromCell(cellXml) {
-  if (!cellXml) return '';
-  const raw = stripXmlTags(cellXml);
-  return decodeXmlEntities(raw).trim();
-}
-
-function applyMergeToOrgCell(rowXml, { restart, clearText }) {
-  const orgCell = getOrganizationCell(rowXml);
-  if (!orgCell) return rowXml;
-
-  const orgCellClean = orgCell.replace(/\s*<w:vMerge(?:\s+w:val="[^"]*")?\s*\/>\s*/g, '');
-
-  const updatedTcPr = orgCellClean.replace(
-    /(<w:tcPr>)([\s\S]*?)(<\/w:tcPr>)/,
-    (_, open, inner, close) => {
-      let nextInner = inner;
-      nextInner += restart ? '<w:vMerge w:val="restart"/>' : '<w:vMerge/>';
-      return `${open}${nextInner}${close}`;
-    }
-  );
-
-  const updatedCell = clearText
-    ? updatedTcPr.replace(/<w:t[^>]*>[\s\S]*?<\/w:t>/g, '<w:t></w:t>')
-    : updatedTcPr;
-
-  return rowXml.replace(orgCell, updatedCell);
-}
-
-function mergeOrganizationsInCommissionTable(documentXml, organizationsInOrder) {
-  const tableRegex = /<w:tbl[\s\S]*?<\/w:tbl>/g;
-  const tables = documentXml.match(tableRegex);
-  if (!tables || tables.length === 0) return documentXml;
-
-  const targetTable = tables.find((tbl) => tbl.includes('Ф.И.О.') && tbl.includes('Наименование предприятия'));
-  if (!targetTable) return documentXml;
-
-  const rowRegex = /<w:tr[\s\S]*?<\/w:tr>/g;
-  const rows = targetTable.match(rowRegex);
-  if (!rows || rows.length === 0) return documentXml;
-
-  const employeeRowIndexes = [];
-  for (let i = 0; i < rows.length; i += 1) {
-    const row = rows[i];
-    const fioText = getTextFromCell(getFioCell(row));
-    const normalizedFio = normalizeOrg(fioText);
-
-    if (!normalizedFio) continue;
-    if (normalizedFio === normalizeOrg('Ф.И.О.')) continue;
-    if (/^\d+$/.test(normalizedFio)) continue; // row with numeric headers (2 etc.)
-    if (!getOrganizationCell(row)) continue;
-
-    employeeRowIndexes.push(i);
-  }
-
-  if (employeeRowIndexes.length === 0) return documentXml;
-  if (!Array.isArray(organizationsInOrder) || organizationsInOrder.length === 0) return documentXml;
-
-  let previousOrg = null;
-  const limit = Math.min(employeeRowIndexes.length, organizationsInOrder.length);
-  for (let i = 0; i < limit; i += 1) {
-    const rowIndex = employeeRowIndexes[i];
-    const row = rows[rowIndex];
-    const currentOrg = normalizeOrg(organizationsInOrder[i]);
-    const isRestart = currentOrg !== previousOrg;
-
-    rows[rowIndex] = applyMergeToOrgCell(row, {
-      restart: isRestart,
-      clearText: !isRestart,
-    });
-
-    previousOrg = currentOrg;
-  }
-
-  const mergedTable = rows.join('');
-  return documentXml.replace(targetTable, mergedTable);
-}
-
 /**
  * data (вход) может быть "как угодно", но на выходе приводим к ключам шаблона:
  * {
@@ -201,17 +96,15 @@ function generateComissionProtocol(data) {
     formatRussianDate(new Date());
 
   const employeeRaw = Array.isArray(data.employee) ? data.employee : [];
-  const organizationsInOrder = employeeRaw.map((e) => e?.organization_name ?? e?.organization ?? '');
   const employee = employeeRaw.map((e, idx) => {
-    const fio = (e && (e.name || e.last_name || e.middle_name))
-      ? {
-          // Template uses "{name} {last_name} {middle_name}".
-          // Put data in FIO order: Surname Name MiddleName.
-          name: e.last_name ?? '',
-          last_name: e.name ?? '',
-          middle_name: e.middle_name ?? '',
-        }
-      : splitFio(e?.fullName ?? e?.fio ?? '');
+    const fio =
+      (e && (e.name || e.last_name || e.middle_name))
+        ? {
+            name: e.name ?? '',
+            last_name: e.last_name ?? '',
+            middle_name: e.middle_name ?? '',
+          }
+        : splitFio(e?.fullName ?? e?.fio ?? '');
 
     return {
       ...fio,
@@ -262,15 +155,7 @@ function generateComissionProtocol(data) {
     throw error;
   }
 
-  const renderedZip = doc.getZip();
-  const docFile = renderedZip.file('word/document.xml');
-  if (docFile) {
-    const sourceXml = docFile.asText();
-    const mergedXml = mergeOrganizationsInCommissionTable(sourceXml, organizationsInOrder);
-    renderedZip.file('word/document.xml', mergedXml);
-  }
-
-  return renderedZip.generate({
+  return doc.getZip().generate({
     type: 'nodebuffer',
     compression: 'DEFLATE',
   });
