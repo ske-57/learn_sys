@@ -57,8 +57,14 @@ function splitFio(fullName = '') {
   };
 }
 
+function sanitizeXmlText(value) {
+  const s = String(value ?? '');
+  // XML 1.0 allowed chars: #x9 #xA #xD #x20-#xD7FF #xE000-#xFFFD
+  return s.replace(/[^\u0009\u000A\u000D\u0020-\uD7FF\uE000-\uFFFD]/g, '');
+}
+
 function normalizeOrg(value) {
-  return String(value ?? '').trim().replace(/\s+/g, ' ').toLowerCase();
+  return sanitizeXmlText(value).trim().replace(/\s+/g, ' ').toLowerCase();
 }
 
 function stripXmlTags(xml) {
@@ -170,10 +176,10 @@ function generateComissionProtocol(data) {
     throw new Error('generateComissionProtocol: data must be an object');
   }
 
-  const group_id = data.group_id ?? '';
-  const course_name = data.course_name ?? '';
-  const hours = data.hours ?? '';
-  const moisei_name = data.moisei_name ?? '';
+  const group_id = sanitizeXmlText(data.group_id ?? '');
+  const course_name = sanitizeXmlText(data.course_name ?? '');
+  const hours = sanitizeXmlText(data.hours ?? '');
+  const moisei_name = sanitizeXmlText(data.moisei_name ?? '');
 
   // В шаблоне именно end_date (а не date_current) :contentReference[oaicite:3]{index=3}
   const end_date =
@@ -182,33 +188,33 @@ function generateComissionProtocol(data) {
     formatRussianDate(new Date());
 
   const employeeRaw = Array.isArray(data.employee) ? data.employee : [];
-  const organizationsInOrder = employeeRaw.map((e) => e?.organization_name ?? e?.organization ?? '');
+  const organizationsInOrder = employeeRaw.map((e) => sanitizeXmlText(e?.organization_name ?? e?.organization ?? ''));
   const employee = employeeRaw.map((e, idx) => {
     const fio = (e && (e.name || e.last_name || e.middle_name))
       ? {
           // Template uses "{name} {last_name} {middle_name}".
           // Put data in FIO order: Surname Name MiddleName.
-          name: e.last_name ?? '',
-          last_name: e.name ?? '',
-          middle_name: e.middle_name ?? '',
+          name: sanitizeXmlText(e.last_name ?? ''),
+          last_name: sanitizeXmlText(e.name ?? ''),
+          middle_name: sanitizeXmlText(e.middle_name ?? ''),
         }
       : splitFio(e?.fullName ?? e?.fio ?? '');
 
     return {
       ...fio,
 
-      organization_name: e?.organization_name ?? e?.organization ?? '',
-      grade: e?.grade ?? '',
+      organization_name: sanitizeXmlText(e?.organization_name ?? e?.organization ?? ''),
+      grade: sanitizeXmlText(e?.grade ?? ''),
 
       // "Номер билета" в шаблоне — {random_number} :contentReference[oaicite:4]{index=4}
       // если не передали — ставим порядковый номер, чтобы всегда заполнилось
-      random_number: e?.random_number ?? e?.ticket_number ?? (idx + 1),
+      random_number: sanitizeXmlText(e?.random_number ?? e?.ticket_number ?? (idx + 1)),
 
       // "Результат проверки знаний" — {courses_mark} :contentReference[oaicite:5]{index=5}
-      courses_mark: e?.courses_mark ?? e?.mark ?? '',
+      courses_mark: sanitizeXmlText(e?.courses_mark ?? e?.mark ?? ''),
 
       // "Заключение экзаменационной комиссии" — {conclusion} :contentReference[oaicite:6]{index=6}
-      conclusion: e?.conclusion ?? '',
+      conclusion: sanitizeXmlText(e?.conclusion ?? ''),
     };
   });
 
