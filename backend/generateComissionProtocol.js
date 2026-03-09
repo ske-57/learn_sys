@@ -92,9 +92,12 @@ function getCellTextByWidth(rowXml, width) {
   return decodeXmlEntities(raw).trim();
 }
 
-function applyMergeToOrgCell(rowXml, restart) {
+function applyMergeToCellByWidth(rowXml, width, restart) {
+  const pattern = new RegExp(
+    `(<w:tc>\\s*<w:tcPr>[\\s\\S]*?<w:tcW w:w="${width}" w:type="dxa"\\/>[\\s\\S]*?)(<\\/w:tcPr>)`
+  );
   return rowXml.replace(
-    /(<w:tc>\s*<w:tcPr>[\s\S]*?<w:tcW w:w="2379" w:type="dxa"\/>[\s\S]*?)(<\/w:tcPr>)/,
+    pattern,
     (_, tcPrStart, tcPrEnd) => {
       const cleaned = tcPrStart.replace(/\s*<w:vMerge(?:\s+w:val="[^"]*")?\s*\/>\s*/g, '');
       const mergeTag = restart ? '<w:vMerge w:val="restart"/>' : '<w:vMerge/>';
@@ -103,7 +106,40 @@ function applyMergeToOrgCell(rowXml, restart) {
   );
 }
 
-function mergeOrganizationsInCommissionTable(documentXml, organizationsInOrder) {
+function getEmployeeRowIndexes(rows) {
+  const employeeRowIndexes = [];
+  for (let i = 0; i < rows.length; i += 1) {
+    const row = rows[i];
+    const fioText = getCellTextByWidth(row, 2918);
+    const normalizedFio = normalizeOrg(fioText);
+
+    if (!normalizedFio) continue;
+    if (normalizedFio === normalizeOrg('Ф.И.О.')) continue;
+    if (/^\d+$/.test(normalizedFio)) continue; // row with numeric headers (2 etc.)
+    employeeRowIndexes.push(i);
+  }
+  return employeeRowIndexes;
+}
+
+function mergeColumnByGroups(rows, employeeRowIndexes, groupsInOrder, width) {
+  if (!Array.isArray(groupsInOrder) || groupsInOrder.length === 0) return rows;
+  if (employeeRowIndexes.length === 0) return rows;
+
+  let previousGroup = null;
+  const limit = Math.min(employeeRowIndexes.length, groupsInOrder.length);
+
+  for (let i = 0; i < limit; i += 1) {
+    const rowIndex = employeeRowIndexes[i];
+    const groupValue = normalizeOrg(groupsInOrder[i]);
+    const isRestart = groupValue !== previousGroup;
+    rows[rowIndex] = applyMergeToCellByWidth(rows[rowIndex], width, isRestart);
+    previousGroup = groupValue;
+  }
+
+  return rows;
+}
+
+function mergeCommissionTableColumns(documentXml, organizationsInOrder) {
   const tableRegex = /<w:tbl[\s\S]*?<\/w:tbl>/g;
   const tables = documentXml.match(tableRegex);
   if (!tables || tables.length === 0) return documentXml;
@@ -115,35 +151,15 @@ function mergeOrganizationsInCommissionTable(documentXml, organizationsInOrder) 
   const rows = targetTable.match(rowRegex);
   if (!rows || rows.length === 0) return documentXml;
 
-  const employeeRowIndexes = [];
-  for (let i = 0; i < rows.length; i += 1) {
-    const row = rows[i];
-    const fioText = getCellTextByWidth(row, 2918);
-    const normalizedFio = normalizeOrg(fioText);
-
-    if (!normalizedFio) continue;
-    if (normalizedFio === normalizeOrg('Ф.И.О.')) continue;
-    if (/^\d+$/.test(normalizedFio)) continue; // row with numeric headers (2 etc.)
-    if (!row.includes('<w:tcW w:w="2379" w:type="dxa"/>')) continue;
-
-    employeeRowIndexes.push(i);
-  }
-
+  const employeeRowIndexes = getEmployeeRowIndexes(rows);
   if (employeeRowIndexes.length === 0) return documentXml;
-  if (!Array.isArray(organizationsInOrder) || organizationsInOrder.length === 0) return documentXml;
 
-  let previousOrg = null;
-  const limit = Math.min(employeeRowIndexes.length, organizationsInOrder.length);
-  for (let i = 0; i < limit; i += 1) {
-    const rowIndex = employeeRowIndexes[i];
-    const row = rows[rowIndex];
-    const currentOrg = normalizeOrg(organizationsInOrder[i]);
-    const isRestart = currentOrg !== previousOrg;
+  // 2379 = "Наименование предприятия" (merge only neighboring same organizations)
+  mergeColumnByGroups(rows, employeeRowIndexes, organizationsInOrder, 2379);
 
-    rows[rowIndex] = applyMergeToOrgCell(row, isRestart);
-
-    previousOrg = currentOrg;
-  }
+  // 1427 = "Заключение экзаменационной комиссии" (single block for all employees)
+  const singleConclusionGroup = new Array(employeeRowIndexes.length).fill('all');
+  mergeColumnByGroups(rows, employeeRowIndexes, singleConclusionGroup, 1427);
 
   const mergedTable = rows.join('');
   return documentXml.replace(targetTable, mergedTable);
@@ -253,7 +269,7 @@ function generateComissionProtocol(data) {
   const docFile = renderedZip.file('word/document.xml');
   if (docFile) {
     const sourceXml = docFile.asText();
-    const mergedXml = mergeOrganizationsInCommissionTable(sourceXml, organizationsInOrder);
+    const mergedXml = mergeCommissionTableColumns(sourceXml, organizationsInOrder);
     renderedZip.file('word/document.xml', mergedXml);
   }
 
