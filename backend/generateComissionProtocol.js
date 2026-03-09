@@ -75,42 +75,26 @@ function decodeXmlEntities(text) {
     .replace(/&#39;/g, "'");
 }
 
-function getOrganizationCell(rowXml) {
-  const cells = rowXml.match(/<w:tc>[\s\S]*?<\/w:tc>/g) || [];
-  return cells.find((cell) => cell.includes('<w:tcW w:w="2379" w:type="dxa"/>')) || null;
-}
-
-function getFioCell(rowXml) {
-  const cells = rowXml.match(/<w:tc>[\s\S]*?<\/w:tc>/g) || [];
-  return cells.find((cell) => cell.includes('<w:tcW w:w="2918" w:type="dxa"/>')) || null;
-}
-
-function getTextFromCell(cellXml) {
-  if (!cellXml) return '';
-  const raw = stripXmlTags(cellXml);
+function getCellTextByWidth(rowXml, width) {
+  const regex = new RegExp(
+    `<w:tc>[\\s\\S]*?<w:tcW w:w="${width}" w:type="dxa"\\/>[\\s\\S]*?<\\/w:tc>`,
+    'g'
+  );
+  const match = rowXml.match(regex);
+  if (!match || match.length === 0) return '';
+  const raw = stripXmlTags(match[0]);
   return decodeXmlEntities(raw).trim();
 }
 
-function applyMergeToOrgCell(rowXml, { restart, clearText }) {
-  const orgCell = getOrganizationCell(rowXml);
-  if (!orgCell) return rowXml;
-
-  const orgCellClean = orgCell.replace(/\s*<w:vMerge(?:\s+w:val="[^"]*")?\s*\/>\s*/g, '');
-
-  const updatedTcPr = orgCellClean.replace(
-    /(<w:tcPr>)([\s\S]*?)(<\/w:tcPr>)/,
-    (_, open, inner, close) => {
-      let nextInner = inner;
-      nextInner += restart ? '<w:vMerge w:val="restart"/>' : '<w:vMerge/>';
-      return `${open}${nextInner}${close}`;
+function applyMergeToOrgCell(rowXml, restart) {
+  return rowXml.replace(
+    /(<w:tc>\s*<w:tcPr>[\s\S]*?<w:tcW w:w="2379" w:type="dxa"\/>[\s\S]*?)(<\/w:tcPr>)/,
+    (_, tcPrStart, tcPrEnd) => {
+      const cleaned = tcPrStart.replace(/\s*<w:vMerge(?:\s+w:val="[^"]*")?\s*\/>\s*/g, '');
+      const mergeTag = restart ? '<w:vMerge w:val="restart"/>' : '<w:vMerge/>';
+      return `${cleaned}${mergeTag}${tcPrEnd}`;
     }
   );
-
-  const updatedCell = clearText
-    ? updatedTcPr.replace(/<w:t[^>]*>[\s\S]*?<\/w:t>/g, '<w:t></w:t>')
-    : updatedTcPr;
-
-  return rowXml.replace(orgCell, updatedCell);
 }
 
 function mergeOrganizationsInCommissionTable(documentXml, organizationsInOrder) {
@@ -128,13 +112,13 @@ function mergeOrganizationsInCommissionTable(documentXml, organizationsInOrder) 
   const employeeRowIndexes = [];
   for (let i = 0; i < rows.length; i += 1) {
     const row = rows[i];
-    const fioText = getTextFromCell(getFioCell(row));
+    const fioText = getCellTextByWidth(row, 2918);
     const normalizedFio = normalizeOrg(fioText);
 
     if (!normalizedFio) continue;
     if (normalizedFio === normalizeOrg('Ф.И.О.')) continue;
     if (/^\d+$/.test(normalizedFio)) continue; // row with numeric headers (2 etc.)
-    if (!getOrganizationCell(row)) continue;
+    if (!row.includes('<w:tcW w:w="2379" w:type="dxa"/>')) continue;
 
     employeeRowIndexes.push(i);
   }
@@ -150,10 +134,7 @@ function mergeOrganizationsInCommissionTable(documentXml, organizationsInOrder) 
     const currentOrg = normalizeOrg(organizationsInOrder[i]);
     const isRestart = currentOrg !== previousOrg;
 
-    rows[rowIndex] = applyMergeToOrgCell(row, {
-      restart: isRestart,
-      clearText: !isRestart,
-    });
+    rows[rowIndex] = applyMergeToOrgCell(row, isRestart);
 
     previousOrg = currentOrg;
   }
