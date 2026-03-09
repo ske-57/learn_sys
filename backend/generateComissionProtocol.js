@@ -191,6 +191,21 @@ function mergeOrganizationColumn(documentXml = '') {
   });
 }
 
+function compareEmployeesForComission(a, b) {
+  const orgA = (a?.organization_name ?? '').trim();
+  const orgB = (b?.organization_name ?? '').trim();
+
+  if (!orgA && orgB) return 1;
+  if (orgA && !orgB) return -1;
+
+  const orgCmp = orgA.localeCompare(orgB, 'ru', { sensitivity: 'base' });
+  if (orgCmp !== 0) return orgCmp;
+
+  const fioA = `${a?.last_name ?? ''} ${a?.name ?? ''} ${a?.middle_name ?? ''}`.trim();
+  const fioB = `${b?.last_name ?? ''} ${b?.name ?? ''} ${b?.middle_name ?? ''}`.trim();
+  return fioA.localeCompare(fioB, 'ru', { sensitivity: 'base' });
+}
+
 /**
  * data (вход) может быть "как угодно", но на выходе приводим к ключам шаблона:
  * {
@@ -256,7 +271,7 @@ function generateComissionProtocol(data) {
       // "Заключение экзаменационной комиссии" — {conclusion} :contentReference[oaicite:6]{index=6}
       conclusion: e?.conclusion ?? '',
     };
-  });
+  }).sort(compareEmployeesForComission);
 
   // Если шаблон лежит рядом с этим файлом:
   const templatePath = path.resolve(__dirname, './Protocol-comission-template.docx');
