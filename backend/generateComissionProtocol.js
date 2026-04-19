@@ -57,6 +57,155 @@ function splitFio(fullName = '') {
   };
 }
 
+function decodeXmlText(text = '') {
+  return text
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+}
+
+function readCellText(tcXml = '') {
+  const parts = [];
+  const re = /<w:t(?:\s[^>]*)?>([\s\S]*?)<\/w:t>/g;
+  let m = re.exec(tcXml);
+  while (m) {
+    parts.push(decodeXmlText(m[1]));
+    m = re.exec(tcXml);
+  }
+  return parts.join('').replace(/\s+/g, ' ').trim();
+}
+
+function upsertVMergeInCell(tcXml = '', mode = null, clearContent = false) {
+  const match = tcXml.match(/^<w:tc\b([^>]*)>([\s\S]*?)<\/w:tc>$/);
+  if (!match) return tcXml;
+
+  const attrs = match[1] || '';
+  const inner = match[2] || '';
+  const tcPrMatch = inner.match(/<w:tcPr>[\s\S]*?<\/w:tcPr>/);
+  if (!tcPrMatch) return tcXml;
+
+  let tcPr = tcPrMatch[0]
+    .replace(/<w:vMerge(?:\s[^>]*)?\/>/g, '')
+    .replace(/<w:vMerge(?:\s[^>]*)?>[\s\S]*?<\/w:vMerge>/g, '');
+
+  if (mode === 'restart') {
+    tcPr = tcPr.replace('</w:tcPr>', '<w:vMerge w:val="restart"/></w:tcPr>');
+  } else if (mode === 'continue') {
+    tcPr = tcPr.replace('</w:tcPr>', '<w:vMerge/></w:tcPr>');
+  }
+
+  let content = inner.replace(/<w:tcPr>[\s\S]*?<\/w:tcPr>/, '');
+  if (clearContent) {
+    content = '<w:p/>';
+  }
+
+  return `<w:tc${attrs}>${tcPr}${content}</w:tc>`;
+}
+
+function mergeOrganizationColumn(documentXml = '') {
+  const tableRegex = /<w:tbl>[\s\S]*?<\/w:tbl>/g;
+
+  return documentXml.replace(tableRegex, (tblXml) => {
+    if (!tblXml.includes('Наименование предприятия')) {
+      return tblXml;
+    }
+
+    const rowRegex = /<w:tr\b[\s\S]*?<\/w:tr>/g;
+    const rows = tblXml.match(rowRegex);
+    if (!rows || rows.length === 0) return tblXml;
+
+    const dataRowIndexes = [];
+    const rowCells = [];
+
+    for (let i = 0; i < rows.length; i += 1) {
+      const row = rows[i];
+      if (!row.includes('<w:numPr>')) continue;
+
+      const cells = row.match(/<w:tc\b[\s\S]*?<\/w:tc>/g);
+      if (!cells || cells.length < 3) continue;
+
+      rowCells[i] = cells;
+      dataRowIndexes.push(i);
+    }
+
+    if (dataRowIndexes.length === 0) return tblXml;
+
+    let start = 0;
+    while (start < dataRowIndexes.length) {
+      const startRowIndex = dataRowIndexes[start];
+      const startOrg = readCellText(rowCells[startRowIndex][2]);
+
+      let end = start + 1;
+      while (end < dataRowIndexes.length) {
+        const currentIndex = dataRowIndexes[end];
+        const currentOrg = readCellText(rowCells[currentIndex][2]);
+        if (currentOrg !== startOrg) break;
+        end += 1;
+      }
+
+      const groupSize = end - start;
+      if (groupSize > 1 && startOrg) {
+        const firstRowIndex = dataRowIndexes[start];
+        rowCells[firstRowIndex][2] = upsertVMergeInCell(
+          rowCells[firstRowIndex][2],
+          'restart',
+          false
+        );
+
+        for (let k = start + 1; k < end; k += 1) {
+          const rowIndex = dataRowIndexes[k];
+          rowCells[rowIndex][2] = upsertVMergeInCell(
+            rowCells[rowIndex][2],
+            'continue',
+            true
+          );
+        }
+      } else {
+        const rowIndex = dataRowIndexes[start];
+        rowCells[rowIndex][2] = upsertVMergeInCell(rowCells[rowIndex][2], null, false);
+      }
+
+      start = end;
+    }
+
+    const updatedRows = rows.slice();
+    for (const rowIndex of dataRowIndexes) {
+      const originalCells = rows[rowIndex].match(/<w:tc\b[\s\S]*?<\/w:tc>/g);
+      if (!originalCells || originalCells.length !== rowCells[rowIndex].length) continue;
+
+      let updatedRow = rows[rowIndex];
+      for (let c = 0; c < originalCells.length; c += 1) {
+        updatedRow = updatedRow.replace(originalCells[c], rowCells[rowIndex][c]);
+      }
+      updatedRows[rowIndex] = updatedRow;
+    }
+
+    let rebuiltTable = tblXml;
+    for (let i = 0; i < rows.length; i += 1) {
+      rebuiltTable = rebuiltTable.replace(rows[i], updatedRows[i]);
+    }
+
+    return rebuiltTable;
+  });
+}
+
+function compareEmployeesForComission(a, b) {
+  const orgA = (a?.organization_name ?? '').trim();
+  const orgB = (b?.organization_name ?? '').trim();
+
+  if (!orgA && orgB) return 1;
+  if (orgA && !orgB) return -1;
+
+  const orgCmp = orgA.localeCompare(orgB, 'ru', { sensitivity: 'base' });
+  if (orgCmp !== 0) return orgCmp;
+
+  const fioA = `${a?.last_name ?? ''} ${a?.name ?? ''} ${a?.middle_name ?? ''}`.trim();
+  const fioB = `${b?.last_name ?? ''} ${b?.name ?? ''} ${b?.middle_name ?? ''}`.trim();
+  return fioA.localeCompare(fioB, 'ru', { sensitivity: 'base' });
+}
+
 /**
  * data (вход) может быть "как угодно", но на выходе приводим к ключам шаблона:
  * {
@@ -122,7 +271,7 @@ function generateComissionProtocol(data) {
       // "Заключение экзаменационной комиссии" — {conclusion} :contentReference[oaicite:6]{index=6}
       conclusion: e?.conclusion ?? '',
     };
-  });
+  }).sort(compareEmployeesForComission);
 
   // Если шаблон лежит рядом с этим файлом:
   const templatePath = path.resolve(__dirname, './Protocol-comission-template.docx');
@@ -155,7 +304,15 @@ function generateComissionProtocol(data) {
     throw error;
   }
 
-  return doc.getZip().generate({
+  const zipOut = doc.getZip();
+  const xmlFilePath = 'word/document.xml';
+  const documentXml = zipOut.file(xmlFilePath)?.asText();
+  if (documentXml) {
+    const mergedXml = mergeOrganizationColumn(documentXml);
+    zipOut.file(xmlFilePath, mergedXml);
+  }
+
+  return zipOut.generate({
     type: 'nodebuffer',
     compression: 'DEFLATE',
   });

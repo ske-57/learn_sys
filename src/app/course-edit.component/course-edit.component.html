@@ -87,11 +87,11 @@
         </div>
 
         <div class="actions">
-          <!-- <button class="icon-btn" title="Редактировать">
+          <button class="icon-btn" title="Редактировать" (click)="toggleEditLesson(c)">
             <svg viewBox="0 0 24 24">
               <use href="#pencil"></use>
             </svg>
-          </button> -->
+          </button>
           <button class="icon-btn" title="Удалить" (click)="deleteLesson(c.id)">
             <svg viewBox="0 0 24 24">
               <use href="#trash"></use>
@@ -121,6 +121,26 @@
         </div>
       </div>
     </div>
+
+    <!-- Редактирование урока -->
+    <div class="edit-lesson" *ngIf="showEditLesson && editingLesson">
+      <h3>Редактирование урока</h3>
+      <div class="field">
+        <label class="field-label">Название урока *</label>
+        <input name="editLessonName" class="field-input" type="text" [(ngModel)]="editingLesson.name" />
+      </div>
+
+      <div class="field">
+        <label class="field-label">Часы * </label>
+        <input name="editLessonHours" class="field-input" type="number" min="0" [(ngModel)]="editingLesson.hours" />
+      </div>
+
+      <div class="form-actions-lesson">
+        <button class="btn primary" type="button" (click)="saveEditedLesson()">Сохранить</button>
+        <button class="btn ghost" type="button" (click)="cancelEditLesson()">Отмена</button>
+      </div>
+    </div>
+
     <!-- Действия для всего курса: сохранить/отмена всех изменений -->
     <div class="course-actions">
       <button class="btn primary" type="button" (click)="saveAll()">Сохранить изменения</button>

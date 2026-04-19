@@ -25,7 +25,9 @@ export class CourseEditComponent implements OnInit, OnDestroy {
     name: '',
   }
   showAddLesson = false;
+  showEditLesson = false;
   newLesson: LessonCreateDTO = { name: '', hours: null! };
+  editingLesson: Lesson | null = null;
 
   ngOnDestroy(): void {
     // Cleanup if needed
@@ -119,6 +121,49 @@ export class CourseEditComponent implements OnInit, OnDestroy {
       },
       error: (error) => console.error(error)
     });
+  }
+
+  toggleEditLesson(lesson: Lesson): void {
+    if (this.showEditLesson && this.editingLesson?.id === lesson.id) {
+      this.showEditLesson = false;
+      this.editingLesson = null;
+    } else {
+      this.editingLesson = { ...lesson };
+      this.showEditLesson = true;
+      this.showAddLesson = false;
+    }
+  }
+
+  saveEditedLesson(): void {
+    if (!this.editingLesson) return;
+    if (!this.editingLesson.name || this.editingLesson.name.trim() === '') {
+      alert('Название не может быть пустым');
+      return;
+    }
+    if (!this.editingLesson.hours || this.editingLesson.hours < 0) {
+      alert('Часы не могут быть меньше или равны 0');
+      return;
+    }
+    
+    this.coursesService.updateLesson(this.courseId, this.editingLesson.id, {
+      name: this.editingLesson.name,
+      hours: this.editingLesson.hours
+    }).subscribe({
+      next: (data) => {
+        this.showEditLesson = false;
+        this.editingLesson = null;
+        this.loadCurrCourse(this.courseId);
+      },
+      error: (err) => {
+        console.error('Failed to update lesson', err);
+        alert('Не удалось обновить урок');
+      }
+    });
+  }
+
+  cancelEditLesson(): void {
+    this.showEditLesson = false;
+    this.editingLesson = null;
   }
 
   // track saving state for individual fields

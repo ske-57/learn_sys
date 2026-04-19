@@ -29,6 +29,8 @@ export class GroupsEditComponent implements OnInit {
   group_members: GroupMember[] = [];
   employees: Employee[] = [];
   organizations: {id: number, name: string}[] = [];
+  organizationSearchTerm: string = '';
+  showOrganizationDropdown: boolean = false;
   courses: any[] = [];
 
   // saving states for group fields
@@ -92,6 +94,37 @@ export class GroupsEditComponent implements OnInit {
       next: (list) => this.courses = list,
       error: (err) => console.error('Failed to load courses', err)
     });
+  }
+
+  get filteredOrganizations() {
+    if (!this.organizationSearchTerm) {
+      return this.organizations;
+    }
+    return this.organizations.filter(org =>
+      org.name.toLowerCase().includes(this.organizationSearchTerm.toLowerCase())
+    );
+  }
+
+  onOrganizationSearchInput(): void {
+    this.showOrganizationDropdown = true;
+  }
+
+  onOrganizationSearchBlur(): void {
+    // Delay to allow click on dropdown item
+    setTimeout(() => {
+      this.showOrganizationDropdown = false;
+    }, 200);
+  }
+
+  selectOrganization(org: {id: number, name: string}): void {
+    this.manualMember.organization_id = org.id;
+    this.organizationSearchTerm = org.name;
+    this.showOrganizationDropdown = false;
+  }
+
+  getSelectedOrganizationName(): string {
+    const org = this.organizations.find(o => o.id === this.manualMember.organization_id);
+    return org ? org.name : '';
   }
 
   removeMember(memberId: number): void {
@@ -183,6 +216,8 @@ export class GroupsEditComponent implements OnInit {
 
   cancelAddManual(): void {
     this.showAddMemberManual = false;
+    this.organizationSearchTerm = '';
+    this.showOrganizationDropdown = false;
   }
 
   getMembers(): void {

@@ -205,6 +205,61 @@ class CourseController {
             return res.status(500).json({ error: 'Internal server error' })
         }
     }
+
+    // Update a lesson (name and/or hours)
+    async updateLesson(req, res) {
+        try {
+            const { course_id, lesson_id } = req.params
+            const { name, hours } = req.body
+
+            if (!course_id || course_id <= 0) {
+                return res.status(400).json({ error: "Course id must be more than zero" })
+            }
+            if (!lesson_id || lesson_id <= 0) {
+                return res.status(400).json({ error: "Lesson id must be more than zero" })
+            }
+            if (!name && !hours) {
+                return res.status(400).json({ error: "At least one field (name or hours) must be provided" })
+            }
+
+            // Build update query based on provided fields
+            const updates = []
+            const values = []
+            let paramIndex = 1
+
+            if (name) {
+                updates.push(`name = $${paramIndex}`)
+                values.push(name)
+                paramIndex++
+            }
+
+            if (hours !== undefined && hours !== null) {
+                updates.push(`hours = $${paramIndex}`)
+                values.push(hours)
+                paramIndex++
+            }
+
+            // Add course_id and lesson_id to values for WHERE clause
+            values.push(course_id)
+            values.push(lesson_id)
+
+            const queryText = `UPDATE course_lessons 
+                SET ${updates.join(', ')} 
+                WHERE course_id = $${paramIndex} AND id = $${paramIndex + 1} 
+                RETURNING *`
+
+            const result = await db.query(queryText, values)
+
+            if (result.rows.length === 0) {
+                return res.status(404).json({ error: 'Lesson not found' })
+            }
+
+            return res.status(200).json(result.rows[0])
+        } catch (err) {
+            console.error('updateLesson error', err)
+            return res.status(500).json({ error: 'Internal server error' })
+        }
+    }
 }
 
-module.exports = new CourseController()
+module.exports = new CourseController();
